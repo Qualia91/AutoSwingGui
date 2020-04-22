@@ -8,6 +8,11 @@ public class Change {
 	private final Runnable change;
 	private final Runnable undo;
 
+	public Change(Runnable change, Runnable undo) {
+		this.change = change;
+		this.undo = undo;
+	}
+
 	public Change(Object model, Field field, Consumer<Object> updateView, Object newVal, Object oldValue) {
 		change = () -> {
 			try {
@@ -25,11 +30,6 @@ public class Change {
 				e.printStackTrace();
 			}
 		};
-	}
-
-	public Change(Runnable change, Runnable undo) {
-		this.change = change;
-		this.undo = undo;
 	}
 
 	public Runnable getChange() {

@@ -9,8 +9,8 @@ public class TestDataTwo {
 	private boolean bool;
 	private final boolean boolFinal;
 
-	public TestDataTwo() {
-		id = "id";
+	public TestDataTwo(String id) {
+		this.id = id;
 		name = "name";
 		number = -1;
 		number2 = -1.0;

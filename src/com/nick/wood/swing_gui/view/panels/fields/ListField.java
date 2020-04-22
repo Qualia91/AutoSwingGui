@@ -1,6 +1,7 @@
 package com.nick.wood.swing_gui.view.panels.fields;
 
 import com.nick.wood.swing_gui.utils.BeanChanger;
+import com.nick.wood.swing_gui.utils.Change;
 import com.nick.wood.swing_gui.view.panels.objects.ClickableImagePanel;
 
 import javax.swing.*;
@@ -37,7 +38,7 @@ public class ListField extends JPanel {
 		for (Object s : value) {
 			try {
 				if (this.constructor == null) {
-					this.constructor = s.getClass().getConstructor();
+					this.constructor = s.getClass().getConstructor(String.class);
 				}
 				System.out.println();
 			} catch (NoSuchMethodException e) {
@@ -59,7 +60,9 @@ public class ListField extends JPanel {
 		gbc1.weightx = 0.7;
 		gbc1.weighty = 1;
 		gbc1.fill = GridBagConstraints.BOTH;
-		jPanel.add(jValue, gbc1);
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.setViewportView(jValue);
+		jPanel.add(scrollPane, gbc1);
 		GridBagConstraints gbc2 = new GridBagConstraints();
 		gbc2.insets = new Insets(5, 5, 5, 5);
 		gbc2.fill = GridBagConstraints.CENTER;
@@ -71,7 +74,32 @@ public class ListField extends JPanel {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				try {
-					Object o = constructor.newInstance();
+					Object o = constructor.newInstance("New Object");
+
+					Runnable changeRun = () -> {
+						try {
+							((ArrayList) field.get(model)).add(o);
+							defaultListModel.addElement(o);
+						} catch (IllegalAccessException illegalAccessException) {
+							illegalAccessException.printStackTrace();
+						}
+					};
+
+					Runnable undoRun = () -> {
+						try {
+							((ArrayList) field.get(model)).remove(o);
+							defaultListModel.removeElement(o);
+						} catch (IllegalAccessException illegalAccessException) {
+							illegalAccessException.printStackTrace();
+						}
+					};
+
+					((ArrayList) field.get(model)).add(o);
+					defaultListModel.addElement(o);
+
+					Change change = new Change(changeRun, undoRun);
+
+					beanChanger.applyChange(change);
 
 				} catch (InstantiationException | IllegalAccessException | InvocationTargetException instantiationException) {
 					instantiationException.printStackTrace();
