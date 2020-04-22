@@ -1,4 +1,4 @@
-package com.nick.wood.swing_gui;
+package com.nick.wood.swing_gui.utils;
 
 public class Change {
 	private final Runnable change;

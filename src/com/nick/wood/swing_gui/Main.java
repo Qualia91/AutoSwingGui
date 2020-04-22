@@ -1,12 +1,13 @@
 package com.nick.wood.swing_gui;
 
+import com.nick.wood.swing_gui.model.TestDataTwo;
 import com.nick.wood.swing_gui.model.TestModel;
+import com.nick.wood.swing_gui.view.GuiBuilder;
 import com.nick.wood.swing_gui.view.frames.EmptyWindow;
 import com.nick.wood.swing_gui.view.panels.objects.*;
 import com.nick.wood.swing_gui.view.frames.WindowContainer;
 
 import javax.swing.*;
-import javax.swing.plaf.basic.BasicSplitPaneDivider;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.function.Consumer;
@@ -25,6 +26,7 @@ public class Main {
 			}
 
 			TestModel testModel = new TestModel("id", "TestValue", 1, 2.3, true);
+			//TestDataTwo testModel = new TestDataTwo("id", "TestValue", 1, 2.3, true, false);
 
 			GuiBuilder guiBuilder = new GuiBuilder(testModel);
 

@@ -1,7 +1,7 @@
-package com.nick.wood.swing_gui;
+package com.nick.wood.swing_gui.view;
 
+import com.nick.wood.swing_gui.utils.BeanChanger;
 import com.nick.wood.swing_gui.view.frames.EmptyWindow;
-import com.nick.wood.swing_gui.view.frames.WindowContainer;
 import com.nick.wood.swing_gui.view.panels.fields.BooleanField;
 import com.nick.wood.swing_gui.view.panels.fields.ListField;
 import com.nick.wood.swing_gui.view.panels.fields.PrimitiveField;
@@ -20,7 +20,7 @@ public class GuiBuilder {
 	BeanChanger beanChanger;
 
 	public GuiBuilder(Object model) {
-		beanChanger = new BeanChanger(model, this::beanActive);
+		beanChanger = new BeanChanger(this::beanActive);
 		ArrayList<JPanel> jPanels = new ArrayList<>();
 
 		this.backButton = new JButton("Back");
@@ -52,9 +52,9 @@ public class GuiBuilder {
 				declaredField.setAccessible(true);
 				Class<?> type = declaredField.getType();
 				jPanels.add(switch (type.toString()) {
-					case "boolean"                   -> new BooleanField(declaredField.getName(), (boolean) declaredField.get(model), declaredField.getModifiers(), (bool, fieldChangeConsumer) -> beanChanger.applyChange(declaredField.getName(), bool, fieldChangeConsumer));
-					case "class java.util.ArrayList" -> new ListField(declaredField.getName(),  (ArrayList)declaredField.get(model), declaredField.getModifiers(), str -> {});
-					default                          -> new PrimitiveField(declaredField.getName(), String.valueOf(declaredField.get(model)), declaredField.getModifiers(), (str, fieldChangeConsumer) -> beanChanger.applyChange(declaredField.getName(), str, fieldChangeConsumer), type.toString());
+					case "boolean"                   -> new BooleanField(declaredField, model, (boolean) declaredField.get(model), declaredField.getModifiers(), beanChanger);
+					case "class java.util.ArrayList" -> new ListField(declaredField, model,  (ArrayList)declaredField.get(model), declaredField.getModifiers(), beanChanger);
+					default                          -> new PrimitiveField(declaredField, model, String.valueOf(declaredField.get(model)), declaredField.getModifiers(), beanChanger, type.toString());
 				});
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();

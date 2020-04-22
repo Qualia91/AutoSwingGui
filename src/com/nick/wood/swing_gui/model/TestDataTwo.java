@@ -9,6 +9,15 @@ public class TestDataTwo {
 	private boolean bool;
 	private final boolean boolFinal;
 
+	public TestDataTwo() {
+		id = "id";
+		name = "name";
+		number = -1;
+		number2 = -1.0;
+		bool = false;
+		boolFinal = false;
+	}
+
 	public TestDataTwo(String id, String name, int number, double number2, boolean bool, boolean boolFinal) {
 		this.id = id;
 		this.name = name;
