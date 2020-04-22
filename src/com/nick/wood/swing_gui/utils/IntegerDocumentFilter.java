@@ -30,7 +30,8 @@ public class IntegerDocumentFilter extends DocumentFilter {
 			super.insertString(fb, offs, str, attr);
 			int val = Integer.parseInt(newText);
 			int oldValue = Integer.parseInt(oldText);
-			Change change = new Change(model, field, jValue, newText, oldText, val, oldValue);
+
+			Change change = new Change(model, field, obj -> jValue.setText(obj.toString()), val, oldValue);
 			try {
 				field.set(model, val);
 			} catch (IllegalAccessException e) {
@@ -53,7 +54,7 @@ public class IntegerDocumentFilter extends DocumentFilter {
 			super.replace(fb, offs, length, str, attrs);
 			int val = Integer.parseInt(newText);
 			int oldValue = Integer.parseInt(oldText);
-			Change change = new Change(model, field, jValue, newText, oldText, val, oldValue);
+			Change change = new Change(model, field, obj -> jValue.setText(obj.toString()), val, oldValue);
 			try {
 				field.set(model, val);
 			} catch (IllegalAccessException e) {

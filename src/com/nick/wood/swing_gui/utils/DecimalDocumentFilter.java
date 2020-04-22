@@ -34,7 +34,7 @@ public class DecimalDocumentFilter extends DocumentFilter {
 			super.insertString(fb, offs, str, attr);
 			int val = Integer.parseInt(newText);
 			double oldValue = Double.parseDouble(oldText);
-			Change change = new Change(model, field, jValue, newText, oldText, val, oldValue);
+			Change change = new Change(model, field, obj -> jValue.setText(obj.toString()), val, oldValue);
 			try {
 				field.set(model, val);
 			} catch (IllegalAccessException e) {
@@ -57,7 +57,7 @@ public class DecimalDocumentFilter extends DocumentFilter {
 			super.replace(fb, offs, length, str, attrs);
 			double val = Double.parseDouble(newText);
 			double oldValue = Double.parseDouble(oldText);
-			Change change = new Change(model, field, jValue, newText, oldText, val, oldValue);
+			Change change = new Change(model, field, obj -> jValue.setText(obj.toString()), val, oldValue);
 			try {
 				field.set(model, val);
 			} catch (IllegalAccessException e) {

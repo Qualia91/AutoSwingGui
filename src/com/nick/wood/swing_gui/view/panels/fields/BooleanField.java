@@ -1,15 +1,12 @@
 package com.nick.wood.swing_gui.view.panels.fields;
 
 import com.nick.wood.swing_gui.utils.BeanChanger;
+import com.nick.wood.swing_gui.utils.Change;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 public class BooleanField extends JPanel {
 	private final BeanChanger beanChanger;
@@ -32,14 +29,17 @@ public class BooleanField extends JPanel {
 			this.jValue.setEnabled(false);
 		}
 
-		this.jValue.addActionListener(e ->
-				beanChanger.applyChange(
-						field,
-						model,
-						!this.jValue.isSelected(),
-						this.jValue.isSelected(),
-						(updateText) -> jValue.setSelected((boolean) updateText)));
+		this.jValue.addActionListener(e -> {
 
+			Change change = new Change(model, field, (updateText) -> jValue.setSelected((boolean) updateText), this.jValue.isSelected(), !this.jValue.isSelected());
+			try {
+				field.set(model, this.jValue.isSelected());
+			} catch (IllegalAccessException illegalAccessException) {
+				illegalAccessException.printStackTrace();
+			}
+			beanChanger.applyChange(change);
+
+		});
 
 		setLayout(new GridLayout(1, 1, 10, 10));
 		jLabelName.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
