@@ -2,10 +2,13 @@ package com.nick.wood.swing_gui.view.panels.fields;
 
 import com.nick.wood.swing_gui.utils.BeanChanger;
 import com.nick.wood.swing_gui.utils.Change;
+import com.nick.wood.swing_gui.view.GuiBuilder;
 import com.nick.wood.swing_gui.view.panels.objects.ClickableImagePanel;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.lang.reflect.Constructor;
@@ -13,8 +16,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 public class ListField extends JPanel {
 	private final BeanChanger beanChanger;
@@ -50,6 +51,69 @@ public class ListField extends JPanel {
 
 		JPanel jPanel = new JPanel();
 
+		beanChanger.attachBeanChangerListener(() -> {
+			jValue.repaint();
+		});
+
+		jValue.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (jValue.hasFocus()) {
+					if (e.getKeyCode() == KeyEvent.VK_DELETE) {
+
+						try {
+
+							Object selectedValue = jValue.getSelectedValue();
+
+							Runnable changeRun = () -> {
+								try {
+									((ArrayList) field.get(model)).remove(selectedValue);
+									defaultListModel.removeElement(selectedValue);
+								} catch (IllegalAccessException illegalAccessException) {
+									illegalAccessException.printStackTrace();
+								}
+							};
+
+							Runnable undoRun = () -> {
+								try {
+									((ArrayList) field.get(model)).add(selectedValue);
+									defaultListModel.addElement(selectedValue);
+								} catch (IllegalAccessException illegalAccessException) {
+									illegalAccessException.printStackTrace();
+								}
+							};
+
+							((ArrayList) field.get(model)).remove(selectedValue);
+							defaultListModel.removeElement(selectedValue);
+
+							Change change = new Change(changeRun, undoRun);
+
+							beanChanger.applyChange(change);
+						} catch (IllegalAccessException illegalAccessException) {
+							illegalAccessException.printStackTrace();
+						}
+					}
+				}
+			}
+		});
+
+		jValue.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				SwingUtilities.invokeLater(() -> {
+
+					try {
+						UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+						UIManager.getDefaults().put("SplitPane.border", BorderFactory.createEmptyBorder());
+					} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
+						ex.printStackTrace();
+					}
+
+					GuiBuilder guiBuilder = new GuiBuilder(jValue.getSelectedValue(), beanChanger);
+
+				});
+			}
+		});
 
 		add(jLabelName);
 		jPanel.setLayout(new GridBagLayout());

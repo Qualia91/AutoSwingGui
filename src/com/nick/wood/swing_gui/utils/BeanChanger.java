@@ -2,18 +2,22 @@ package com.nick.wood.swing_gui.utils;
 
 import javax.swing.*;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Stack;
 import java.util.function.Consumer;
 
 public class BeanChanger {
 
 	private boolean isActive = false;
-	private final Runnable beanChangerActivateConsumer;
 	Stack<Change> actionStack = new Stack<>();
 	Stack<Change> redoStack = new Stack<>();
+	private final ArrayList<Runnable> beanChangerActivateRunnables = new ArrayList<>();
 
-	public BeanChanger(Runnable beanChangerActivateConsumer) {
-		this.beanChangerActivateConsumer = beanChangerActivateConsumer;
+	public BeanChanger() {
+	}
+
+	public void attachBeanChangerListener(Runnable beanChangerActivateConsumer) {
+		beanChangerActivateRunnables.add(beanChangerActivateConsumer);
 	}
 
 	public Stack<Change> getActionStack() {
@@ -31,7 +35,7 @@ public class BeanChanger {
 			redoStack.push(pop);
 			pop.getUndo().run();
 		}
-		beanChangerActivateConsumer.run();
+		beanChangerActivateRunnables.forEach(Runnable::run);
 		isActive = false;
 	}
 
@@ -42,7 +46,7 @@ public class BeanChanger {
 			actionStack.push(pop);
 			pop.getChange().run();
 		}
-		beanChangerActivateConsumer.run();
+		beanChangerActivateRunnables.forEach(Runnable::run);
 		isActive = false;
 	}
 
@@ -50,7 +54,7 @@ public class BeanChanger {
 		if (!isActive) {
 			redoStack.clear();
 			actionStack.push(change);
-			beanChangerActivateConsumer.run();
+			beanChangerActivateRunnables.forEach(Runnable::run);
 		}
 	}
 
@@ -78,7 +82,7 @@ public class BeanChanger {
 				declaredField.set(model, newValue);
 				redoStack.clear();
 				actionStack.push(change);
-				beanChangerActivateConsumer.run();
+				beanChangerActivateRunnables.forEach(Runnable::run);
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
 			}

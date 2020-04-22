@@ -66,4 +66,16 @@ public class TestDataTwo {
 	public boolean isBoolFinal() {
 		return boolFinal;
 	}
+
+	@Override
+	public String toString() {
+		return "TestDataTwo{" +
+				"id='" + id + '\'' +
+				", name='" + name + '\'' +
+				", number=" + number +
+				", number2=" + number2 +
+				", bool=" + bool +
+				", boolFinal=" + boolFinal +
+				'}';
+	}
 }

@@ -43,7 +43,7 @@ public class StringDocumentFilter extends DocumentFilter {
 
 		String newText = oldText.substring(0, offs) + str + oldText.substring(length + offs);
 
-		Change change = new Change(model, field, obj -> jValue.setText(obj.toString()), str, oldText);
+		Change change = new Change(model, field, obj -> jValue.setText(obj.toString()), newText, oldText);
 		try {
 			field.set(model, newText);
 		} catch (IllegalAccessException e) {

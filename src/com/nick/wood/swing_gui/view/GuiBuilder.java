@@ -17,10 +17,10 @@ public class GuiBuilder {
 
 	private final JButton backButton;
 	private final JButton forwardButton;
-	BeanChanger beanChanger;
+	private final BeanChanger beanChanger;
 
-	public GuiBuilder(Object model) {
-		beanChanger = new BeanChanger(this::beanActive);
+	public GuiBuilder(Object model, BeanChanger beanChanger) {
+		this.beanChanger = beanChanger;
 		ArrayList<JPanel> jPanels = new ArrayList<>();
 
 		this.backButton = new JButton("Back");
@@ -66,7 +66,7 @@ public class GuiBuilder {
 		EmptyWindow emptyWindow = new EmptyWindow(800, 600, fieldListPanel);
 	}
 
-	private void beanActive() {
+	public void beanActive() {
 		if (beanChanger.getActionStack().empty()) {
 			backButton.setEnabled(false);
 		} else {

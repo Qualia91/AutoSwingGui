@@ -2,6 +2,7 @@ package com.nick.wood.swing_gui;
 
 import com.nick.wood.swing_gui.model.TestDataTwo;
 import com.nick.wood.swing_gui.model.TestModel;
+import com.nick.wood.swing_gui.utils.BeanChanger;
 import com.nick.wood.swing_gui.view.GuiBuilder;
 import com.nick.wood.swing_gui.view.frames.EmptyWindow;
 import com.nick.wood.swing_gui.view.panels.objects.*;
@@ -16,6 +17,9 @@ public class Main {
 
 	public static void main(String[] args) {
 
+
+		TestModel testModel = new TestModel("id", "TestValue", 1, 2.3, true);
+
 		SwingUtilities.invokeLater(() -> {
 
 			try {
@@ -25,10 +29,11 @@ public class Main {
 				e.printStackTrace();
 			}
 
-			TestModel testModel = new TestModel("id", "TestValue", 1, 2.3, true);
 			//TestDataTwo testModel = new TestDataTwo("id", "TestValue", 1, 2.3, true, false);
 
-			GuiBuilder guiBuilder = new GuiBuilder(testModel);
+			BeanChanger beanChanger = new BeanChanger();
+			GuiBuilder guiBuilder = new GuiBuilder(testModel, beanChanger);
+			beanChanger.attachBeanChangerListener(guiBuilder::beanActive);
 
 
 
