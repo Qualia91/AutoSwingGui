@@ -33,12 +33,14 @@ public class DecimalDocumentFilter extends DocumentFilter {
 		if (newText.matches("^[0-9]*[.]?[0-9]*$")) {
 			super.insertString(fb, offs, str, attr);
 			int val = Integer.parseInt(newText);
-			beanChanger.applyChange(
-					field,
-					model,
-					Double.parseDouble(oldText),
-					val,
-					(updateText) -> jValue.setText(updateText.toString()));
+			double oldValue = Double.parseDouble(oldText);
+			Change change = new Change(model, field, jValue, newText, oldText, val, oldValue);
+			try {
+				field.set(model, val);
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
+			beanChanger.applyChange(change);
 		} else {
 			Toolkit.getDefaultToolkit().beep();
 		}
@@ -54,12 +56,14 @@ public class DecimalDocumentFilter extends DocumentFilter {
 		if (newText.matches("^[0-9]*[.]?[0-9]*$")) {
 			super.replace(fb, offs, length, str, attrs);
 			double val = Double.parseDouble(newText);
-			beanChanger.applyChange(
-					field,
-					model,
-					Double.parseDouble(oldText),
-					val,
-					(updateText) -> jValue.setText(updateText.toString()));
+			double oldValue = Double.parseDouble(oldText);
+			Change change = new Change(model, field, jValue, newText, oldText, val, oldValue);
+			try {
+				field.set(model, val);
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
+			beanChanger.applyChange(change);
 		} else {
 			Toolkit.getDefaultToolkit().beep();
 		}

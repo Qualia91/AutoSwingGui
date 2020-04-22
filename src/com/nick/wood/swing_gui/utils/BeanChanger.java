@@ -46,6 +46,14 @@ public class BeanChanger {
 		isActive = false;
 	}
 
+	public void applyChange(Change change) {
+		if (!isActive) {
+			redoStack.clear();
+			actionStack.push(change);
+			beanChangerActivateConsumer.run();
+		}
+	}
+
 	public void applyChange(Field declaredField, Object model, Object oldValue, Object newValue, Consumer<Object> updateViewConsumer) {
 		if (!isActive) {
 			try {

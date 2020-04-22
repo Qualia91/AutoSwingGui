@@ -29,12 +29,14 @@ public class IntegerDocumentFilter extends DocumentFilter {
 		if (newText.matches("^[0-9]+")) {
 			super.insertString(fb, offs, str, attr);
 			int val = Integer.parseInt(newText);
-			beanChanger.applyChange(
-					field,
-					model,
-					Integer.parseInt(oldText),
-					val,
-					(updateText) -> jValue.setText(updateText.toString()));
+			int oldValue = Integer.parseInt(oldText);
+			Change change = new Change(model, field, jValue, newText, oldText, val, oldValue);
+			try {
+				field.set(model, val);
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
+			beanChanger.applyChange(change);
 		} else {
 			Toolkit.getDefaultToolkit().beep();
 		}
@@ -50,12 +52,14 @@ public class IntegerDocumentFilter extends DocumentFilter {
 		if (newText.matches("^[0-9]+")) {
 			super.replace(fb, offs, length, str, attrs);
 			int val = Integer.parseInt(newText);
-			beanChanger.applyChange(
-					field,
-					model,
-					Integer.parseInt(oldText),
-					val,
-					(updateText) -> jValue.setText(updateText.toString()));
+			int oldValue = Integer.parseInt(oldText);
+			Change change = new Change(model, field, jValue, newText, oldText, val, oldValue);
+			try {
+				field.set(model, val);
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
+			beanChanger.applyChange(change);
 		} else {
 			Toolkit.getDefaultToolkit().beep();
 		}
