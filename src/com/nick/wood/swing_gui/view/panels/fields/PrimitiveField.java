@@ -8,22 +8,17 @@ import com.nick.wood.swing_gui.utils.StringDocumentFilter;
 import javax.swing.*;
 import javax.swing.text.AbstractDocument;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.Optional;
 
 public class PrimitiveField extends JPanel {
 
 	private final BeanChanger beanChanger;
 	private final JLabel jLabelName;
 	private final JComponent jValue;
-	private final Optional<String> oldGuiString = Optional.of("");
 
 	public PrimitiveField(Field field, Object model, String value, int modifiers, BeanChanger beanChanger, String typeString) {
 
-		//(bool, fieldChangeConsumer) -> beanChanger.applyChange(declaredField, bool, fieldChangeConsumer)
 		this.beanChanger = beanChanger;
 		String modifierString = Modifier.toString(modifiers);
 

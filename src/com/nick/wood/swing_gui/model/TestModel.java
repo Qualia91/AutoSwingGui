@@ -12,7 +12,7 @@ public class TestModel {
 	private final boolean boolFinal;
 	private final ArrayList<String> testDataOnes = new ArrayList<>();
 	private final ArrayList<TestDataTwo> testDataTwos = new ArrayList<>();
-	//private final ArrayList<TestDataThree> testDataThrees = new ArrayList<>();
+	private final ArrayList<Integer> testDataThrees = new ArrayList<>();
 
 	public TestModel(String id, String name, int number, double number2, boolean bool) {
 		this.id = id;
@@ -27,6 +27,9 @@ public class TestModel {
 		this.testDataTwos.add(new TestDataTwo("id", "TestValue", 1, 2.3, true, false));
 		this.testDataTwos.add(new TestDataTwo("id", "TestValue", 1, 2.3, true, false));
 		this.testDataTwos.add(new TestDataTwo("id", "TestValue", 1, 2.3, true, false));
+		this.testDataThrees.add(1);
+		this.testDataThrees.add(2);
+		this.testDataThrees.add(3);
 	}
 
 	public String getId() {

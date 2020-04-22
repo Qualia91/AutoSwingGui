@@ -10,30 +10,30 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.function.Consumer;
 
+import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER;
+import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED;
+
 public class SideBarWindow extends JPanel {
 
 	double openRatio;
 	double ratio = 0.0;
 	double delta = 0.005;
-	private final JPanel panelOne;
-	private final JPanel panelTwo;
 
 	public SideBarWindow(double openRatio, JPanel panelOne, JPanel panelTwo, Consumer<MouseListener> changeActionOne, Consumer<MouseListener> changeActionTwo) throws HeadlessException {
 
 		setLayout(new GridLayout());
 
 		this.openRatio = openRatio;
-		this.panelOne = panelOne;
-		this.panelTwo = panelTwo;
 
-		JSplitPane jSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, panelOne, panelTwo);
+		JScrollPane jScrollPane = new JScrollPane(panelOne, VERTICAL_SCROLLBAR_AS_NEEDED, HORIZONTAL_SCROLLBAR_NEVER);
+
+		JSplitPane jSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, jScrollPane, panelTwo);
 
 		ActionListener closedAction = timerAction -> {
 			ratio -= delta;
 			if (ratio <= 0.0) {
 				ratio = 0.0;
 				jSplitPane.setDividerLocation(ratio);
-				jSplitPane.setLeftComponent(null);
 				((Timer) timerAction.getSource()).stop();
 				return;
 			}
@@ -67,7 +67,6 @@ public class SideBarWindow extends JPanel {
 			public void mouseClicked(MouseEvent e) {
 				delta = openRatio / 10.0;
 				timerOpen.start();
-				jSplitPane.setLeftComponent(panelOne);
 			}
 		});
 

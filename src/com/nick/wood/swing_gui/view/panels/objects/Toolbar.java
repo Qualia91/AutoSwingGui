@@ -6,26 +6,20 @@ import java.util.ArrayList;
 
 public class Toolbar extends JPanel {
 
-	public Toolbar(ArrayList<JButton> jButtons) {
+	public Toolbar(ArrayList<ClickableImagePanel> clickableImagePanels) {
 
-		setLayout(new GridLayout(1, jButtons.size(), 10, 10));
+		setLayout(new GridLayout(1, clickableImagePanels.size(), 10, 10));
 
-		for (JButton jButton : jButtons) {
+		for (ClickableImagePanel clickableImagePanel : clickableImagePanels) {
 
-			add(jButton);
+			add(clickableImagePanel);
 
 		}
 
 	}
 
-	public Toolbar() {
-		JButton button1 = new JButton("B");
-		JButton button2 = new JButton("A");
-
-		setLayout(new FlowLayout(FlowLayout.LEFT));
-
-		add(button1);
-		add(button2);
-
+	public Toolbar(String title) {
+		setLayout(new GridLayout(1, 1, 10, 10));
+		add(new JLabel(title));
 	}
 }

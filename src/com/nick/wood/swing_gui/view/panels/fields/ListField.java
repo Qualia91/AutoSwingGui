@@ -3,7 +3,9 @@ package com.nick.wood.swing_gui.view.panels.fields;
 import com.nick.wood.swing_gui.utils.BeanChanger;
 import com.nick.wood.swing_gui.utils.Change;
 import com.nick.wood.swing_gui.view.GuiBuilder;
+import com.nick.wood.swing_gui.view.frames.EmptyWindow;
 import com.nick.wood.swing_gui.view.panels.objects.ClickableImagePanel;
+import com.nick.wood.swing_gui.view.panels.objects.Toolbar;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,13 +18,15 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.function.Function;
+
+import static javax.swing.ScrollPaneConstants.*;
 
 public class ListField extends JPanel {
 	private final BeanChanger beanChanger;
-	private final JLabel jLabelName;
 	private final JList<Object> jValue;
 	private final DefaultListModel<Object> defaultListModel;
-	private Constructor<? extends Object> constructor;
+	private Constructor<?> constructor;
 
 	public ListField(Field field, Object model, ArrayList<Object> value, int modifiers, BeanChanger beanChanger) {
 
@@ -31,7 +35,7 @@ public class ListField extends JPanel {
 
 		setLayout(new GridLayout(1, 2, 10, 10));
 
-		this.jLabelName = new JLabel(field.getName());
+		JLabel jLabelName = new JLabel(field.getName());
 
 		this.jValue = new JList<>();
 		this.defaultListModel = new DefaultListModel<>();
@@ -41,7 +45,6 @@ public class ListField extends JPanel {
 				if (this.constructor == null) {
 					this.constructor = s.getClass().getConstructor(String.class);
 				}
-				System.out.println();
 			} catch (NoSuchMethodException e) {
 				e.printStackTrace();
 			}
@@ -51,9 +54,7 @@ public class ListField extends JPanel {
 
 		JPanel jPanel = new JPanel();
 
-		beanChanger.attachBeanChangerListener(() -> {
-			jValue.repaint();
-		});
+		beanChanger.attachBeanChangerListener(jValue::repaint);
 
 		jValue.addKeyListener(new KeyAdapter() {
 			@Override
@@ -100,18 +101,39 @@ public class ListField extends JPanel {
 		jValue.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				SwingUtilities.invokeLater(() -> {
 
-					try {
-						UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-						UIManager.getDefaults().put("SplitPane.border", BorderFactory.createEmptyBorder());
-					} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException ex) {
-						ex.printStackTrace();
-					}
+				if (e.getClickCount() == 2) {
 
-					GuiBuilder guiBuilder = new GuiBuilder(jValue.getSelectedValue(), beanChanger);
+					SwingUtilities.invokeLater(() -> {
 
-				});
+						switch (jValue.getSelectedValue().getClass().getSimpleName()) {
+							case "String":
+								String oldValue = (String) jValue.getSelectedValue();
+								Object result = JOptionPane.showInputDialog("Edit " + oldValue.getClass().getTypeName(), oldValue);
+								usePopupData(result, oldValue, field, model);
+								break;
+							case "Integer":
+								editBox(Integer::parseInt, field, model);
+								break;
+							case "Long":
+								editBox(Long::parseLong, field, model);
+								break;
+							case "Float":
+								editBox(Float::parseFloat, field, model);
+							case "Double":
+								editBox(Double::parseDouble, field, model);
+								break;
+
+							default: {
+								GuiBuilder guiBuilder = new GuiBuilder(jValue.getSelectedValue(), beanChanger, new Toolbar("Edit " + jValue.getSelectedValue().getClass().getTypeName()));
+								EmptyWindow emptyWindow = new EmptyWindow(800, 600, guiBuilder.getFieldListPanel());
+								emptyWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+								break;
+							}
+						}
+
+					});
+				}
 			}
 		});
 
@@ -121,11 +143,11 @@ public class ListField extends JPanel {
 		gbc1.insets = new Insets(5, 5, 5, 5);
 		gbc1.gridx = 0;
 		gbc1.gridy = 0;
-		gbc1.weightx = 0.7;
+		gbc1.weightx = 0.1;
 		gbc1.weighty = 1;
 		gbc1.fill = GridBagConstraints.BOTH;
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setViewportView(jValue);
+		JScrollPane scrollPane = new JScrollPane(jValue, VERTICAL_SCROLLBAR_AS_NEEDED, HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		scrollPane.setPreferredSize(new Dimension(0, 0));
 		jPanel.add(scrollPane, gbc1);
 		GridBagConstraints gbc2 = new GridBagConstraints();
 		gbc2.insets = new Insets(5, 5, 5, 5);
@@ -177,5 +199,57 @@ public class ListField extends JPanel {
 		jValue.setBorder(BorderFactory.createEmptyBorder(2, 2, 2, 2));
 		JSplitPane jSplitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, true, jLabelName, jPanel);
 		add(jSplitPane);
+	}
+
+	private void usePopupData(Object result, Object oldValue, Field field, Object model) {
+		if (result != null && !oldValue.equals(result)) {
+			Runnable changeRun = () -> {
+				try {
+					((ArrayList) field.get(model)).set(jValue.getSelectedIndex(), result);
+					defaultListModel.set(jValue.getSelectedIndex(), result);
+				} catch (IllegalAccessException illegalAccessException) {
+					illegalAccessException.printStackTrace();
+				}
+			};
+
+			Runnable undoRun = () -> {
+				try {
+					((ArrayList) field.get(model)).set(jValue.getSelectedIndex(), oldValue);
+					defaultListModel.set(jValue.getSelectedIndex(), oldValue);
+				} catch (IllegalAccessException illegalAccessException) {
+					illegalAccessException.printStackTrace();
+				}
+			};
+
+			try {
+				((ArrayList) field.get(model)).set(jValue.getSelectedIndex(), result);
+				defaultListModel.set(jValue.getSelectedIndex(), result);
+				jValue.repaint();
+			} catch (IllegalAccessException illegalAccessException) {
+				illegalAccessException.printStackTrace();
+			}
+
+			Change change = new Change(changeRun, undoRun);
+
+			beanChanger.applyChange(change);
+		}
+	}
+
+	private <X> void editBox(Function<String, X> castFunction, Field field, Object model) {
+		boolean finished = false;
+		while (!finished) {
+			var oldValue = jValue.getSelectedValue();
+			try {
+				String result = JOptionPane.showInputDialog("Edit " + oldValue.getClass().getTypeName(), oldValue);
+				if (result == null) {
+					return;
+				}
+				var castedResult = castFunction.apply(result);
+				usePopupData(castedResult, oldValue, field, model);
+				finished = true;
+			} catch (Exception exception) {
+				JOptionPane.showMessageDialog(null, "Could not cast to correct type " + oldValue.getClass().getTypeName() + ", try again.");
+			}
+		}
 	}
 }

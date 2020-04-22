@@ -17,6 +17,5 @@ public class EmptyWindow extends JFrame {
 		super.setSize(width, height);
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
 		super.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
-		super.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 	}
 }

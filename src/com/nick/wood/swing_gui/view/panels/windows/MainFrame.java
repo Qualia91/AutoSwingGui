@@ -13,7 +13,7 @@ public class MainFrame extends JPanel {
 	private TextPanel textArea = new TextPanel();
 	private JButton jButton = new JButton("Button");
 
-	private Toolbar toolbar = new Toolbar();
+	private Toolbar toolbar = new Toolbar("");
 
 	Node rootNode;
 

@@ -9,6 +9,9 @@ import com.nick.wood.swing_gui.view.panels.objects.*;
 import com.nick.wood.swing_gui.view.frames.WindowContainer;
 
 import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.function.Consumer;
@@ -29,15 +32,55 @@ public class Main {
 				e.printStackTrace();
 			}
 
-			//TestDataTwo testModel = new TestDataTwo("id", "TestValue", 1, 2.3, true, false);
-
 			BeanChanger beanChanger = new BeanChanger();
-			GuiBuilder guiBuilder = new GuiBuilder(testModel, beanChanger);
-			beanChanger.attachBeanChangerListener(guiBuilder::beanActive);
 
+			ClickableImagePanel backButton = new ClickableImagePanel("/icons/icon.png");
+			backButton.getLabel().addMouseListener( new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					beanChanger.undo();
+				}
+			});
+
+			ClickableImagePanel forwardButton = new ClickableImagePanel("/icons/icon.png");
+			forwardButton.getLabel().addMouseListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					beanChanger.redo();
+				}
+			});
+
+			backButton.setEnabled(false);
+			forwardButton.setEnabled(false);
+
+			ClickableImagePanel minimiseButton = new ClickableImagePanel("/icons/icon.png");
+
+			ArrayList<ClickableImagePanel> clickableImagePanels = new ArrayList<>();
+			clickableImagePanels.add(backButton);
+			clickableImagePanels.add(forwardButton);
+			clickableImagePanels.add(minimiseButton);
+
+			Toolbar toolbar = new Toolbar(clickableImagePanels);
+
+
+			GuiBuilder guiBuilder = new GuiBuilder(testModel, beanChanger, toolbar);
+			beanChanger.attachBeanChangerListener(() -> guiBuilder.beanActive(backButton, forwardButton));
+
+			ButtonPanel buttonPanel2 = new ButtonPanel();
+
+			SideBarWindow sideBarWindow = new SideBarWindow(0.3, guiBuilder.getFieldListPanel(), buttonPanel2,
+					minimiseButton::attachEventListener,
+					buttonPanel2::attachEventListener);
+
+			EmptyWindow emptyWindow = new EmptyWindow(1000, 800, sideBarWindow);
+			emptyWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 
 		});
+
+	}
+
+	private void autoGui() {
 
 	}
 
