@@ -22,16 +22,25 @@ public class StringDocumentFilter extends DocumentFilter {
 	}
 
 	@Override
+	public void remove(FilterBypass fb, int offset, int length) throws BadLocationException {
+		String oldText = fb.getDocument().getText(0,
+				fb.getDocument().getLength());
+
+		String newText = oldText.substring(0, offset) + oldText.substring(length + offset);
+
+		Change change = new Change(model, field, obj -> jValue.setText(obj.toString()), newText, oldText);
+
+		beanChanger.applyChange(change);
+		super.remove(fb, offset, length);
+	}
+
+	@Override
 	public void insertString(FilterBypass fb, int offs, String str, AttributeSet attr) throws BadLocationException {
 		String oldText = fb.getDocument().getText(0,
 				fb.getDocument().getLength());
 
 		Change change = new Change(model, field, obj -> jValue.setText(obj.toString()), str, oldText);
-		try {
-			field.set(model, str);
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		}
+
 		beanChanger.applyChange(change);
 		super.insertString(fb, offs, str, attr);
 	}
@@ -44,11 +53,7 @@ public class StringDocumentFilter extends DocumentFilter {
 		String newText = oldText.substring(0, offs) + str + oldText.substring(length + offs);
 
 		Change change = new Change(model, field, obj -> jValue.setText(obj.toString()), newText, oldText);
-		try {
-			field.set(model, newText);
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		}
+
 		beanChanger.applyChange(change);
 		super.replace(fb, offs, length, str, attrs);
 	}

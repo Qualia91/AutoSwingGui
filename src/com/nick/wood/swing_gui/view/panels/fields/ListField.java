@@ -214,10 +214,11 @@ public class ListField extends JPanel {
 	}
 
 	private void usePopupData(Object result, Object oldValue, Field field, Object model) {
+		int selectedIndex = jValue.getSelectedIndex();
 		if (result != null && !oldValue.equals(result)) {
 			Runnable changeRun = () -> {
 				try {
-					((ArrayList) field.get(model)).set(jValue.getSelectedIndex(), result);
+					((ArrayList) field.get(model)).set(selectedIndex, result);
 					defaultListModel.set(jValue.getSelectedIndex(), result);
 				} catch (IllegalAccessException illegalAccessException) {
 					illegalAccessException.printStackTrace();
@@ -226,7 +227,7 @@ public class ListField extends JPanel {
 
 			Runnable undoRun = () -> {
 				try {
-					((ArrayList) field.get(model)).set(jValue.getSelectedIndex(), oldValue);
+					((ArrayList) field.get(model)).set(selectedIndex, oldValue);
 					defaultListModel.set(jValue.getSelectedIndex(), oldValue);
 				} catch (IllegalAccessException illegalAccessException) {
 					illegalAccessException.printStackTrace();

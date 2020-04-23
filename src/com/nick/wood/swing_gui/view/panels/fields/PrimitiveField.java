@@ -1,9 +1,6 @@
 package com.nick.wood.swing_gui.view.panels.fields;
 
-import com.nick.wood.swing_gui.utils.BeanChanger;
-import com.nick.wood.swing_gui.utils.DecimalDocumentFilter;
-import com.nick.wood.swing_gui.utils.IntegerDocumentFilter;
-import com.nick.wood.swing_gui.utils.StringDocumentFilter;
+import com.nick.wood.swing_gui.utils.*;
 
 import javax.swing.*;
 import javax.swing.text.AbstractDocument;
@@ -31,6 +28,8 @@ public class PrimitiveField extends JPanel {
 
 			switch (typeString) {
 				case "long":
+					((AbstractDocument) ((JTextField) jValue).getDocument()).setDocumentFilter(new LongDocumentFilter(beanChanger, ((JTextField) jValue), field, model));
+					break;
 				case "int":
 					((AbstractDocument) ((JTextField) jValue).getDocument()).setDocumentFilter(new IntegerDocumentFilter(beanChanger, ((JTextField) jValue), field, model));
 					break;

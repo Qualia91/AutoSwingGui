@@ -1,20 +1,20 @@
 package com.nick.wood.swing_gui.utils;
 
 import javax.swing.*;
-import javax.swing.text.*;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DocumentFilter;
 import java.awt.*;
 import java.lang.reflect.Field;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
-public class IntegerDocumentFilter extends DocumentFilter {
-
+public class LongDocumentFilter extends DocumentFilter {
+	
 	private final BeanChanger beanChanger;
 	private final JTextField jValue;
 	private final Field field;
 	private final Object model;
 
-	public IntegerDocumentFilter(BeanChanger beanChanger, JTextField jValue, Field field, Object model) {
+	public LongDocumentFilter(BeanChanger beanChanger, JTextField jValue, Field field, Object model) {
 		this.field = field;
 		this.beanChanger = beanChanger;
 		this.jValue = jValue;
@@ -45,7 +45,7 @@ public class IntegerDocumentFilter extends DocumentFilter {
 		String oldText = fb.getDocument().getText(0,
 				fb.getDocument().getLength());
 		String newText = str;
-		if (newText.length() <= 9 && newText.matches("^[0-9]+")) {
+		if (newText.length() <= 18 && newText.matches("^[0-9]+")) {
 			super.insertString(fb, offs, str, attr);
 			int val = Integer.parseInt(newText);
 			int oldValue = Integer.parseInt(oldText);
@@ -71,7 +71,7 @@ public class IntegerDocumentFilter extends DocumentFilter {
 
 		String newText = oldText.substring(0, offs) + str + oldText.substring(length + offs);
 
-		if (newText.length() <= 9 && newText.matches("^[0-9]+") ) {
+		if (newText.length() <= 18 && newText.matches("^[0-9]+") ) {
 			super.replace(fb, offs, length, str, attrs);
 			int val = Integer.parseInt(newText);
 			int oldValue = Integer.parseInt(oldText);

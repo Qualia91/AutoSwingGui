@@ -24,25 +24,43 @@ public class DecimalDocumentFilter extends DocumentFilter {
 	}
 
 	@Override
+	public void remove(FilterBypass fb, int offset, int length) throws BadLocationException {
+		String oldText = fb.getDocument().getText(0,
+				fb.getDocument().getLength());
+
+		String newText = oldText.substring(0, offset) + oldText.substring(length + offset);
+
+		double newValue = 0.0;
+		if (!newText.isEmpty()) {
+			newValue = Double.parseDouble(newText);
+		}
+		double oldValue = Double.parseDouble(oldText);
+
+		Change change = new Change(model, field, obj -> jValue.setText(obj.toString()), newValue, oldValue);
+
+		beanChanger.applyChange(change);
+		super.remove(fb, offset, length);
+	}
+
+	@Override
 	public void insertString(FilterBypass fb, int offs, String str, AttributeSet attr) throws BadLocationException {
 		String oldText = fb.getDocument().getText(0,
 				fb.getDocument().getLength());
 
-		String newText = oldText.substring(0, offs) + str + oldText.substring(0 + offs);
+		String newText = oldText.substring(0, offs) + str + oldText.substring(offs);
 
 		if (newText.matches("^[0-9]*[.]?[0-9]*$")) {
-			super.insertString(fb, offs, str, attr);
 			int val = Integer.parseInt(newText);
 			double oldValue = Double.parseDouble(oldText);
 			Change change = new Change(model, field, obj -> jValue.setText(obj.toString()), val, oldValue);
-			try {
-				field.set(model, val);
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			}
+
 			beanChanger.applyChange(change);
+
+			super.insertString(fb, offs, str, attr);
 		} else {
-			Toolkit.getDefaultToolkit().beep();
+			if (!newText.isEmpty()) {
+				Toolkit.getDefaultToolkit().beep();
+			}
 		}
 	}
 
@@ -54,23 +72,20 @@ public class DecimalDocumentFilter extends DocumentFilter {
 		String newText = oldText.substring(0, offs) + str + oldText.substring(length + offs);
 
 		if (newText.matches("^[0-9]*[.]?[0-9]*$")) {
-			super.replace(fb, offs, length, str, attrs);
 			double val = Double.parseDouble(newText);
+			if (oldText.isEmpty()) {
+				oldText = "0";
+			}
 			double oldValue = Double.parseDouble(oldText);
 			Change change = new Change(model, field, obj -> jValue.setText(obj.toString()), val, oldValue);
-			try {
-				field.set(model, val);
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			}
-			beanChanger.applyChange(change);
-		} else {
-			Toolkit.getDefaultToolkit().beep();
-		}
-	}
 
-	private int numOfDecimalPlaces(String str) {
-		String[] split = str.split("\\.");
-		return (split.length == 0) ? 0 : split[1].length();
+			beanChanger.applyChange(change);
+
+			super.replace(fb, offs, length, str, attrs);
+		} else {
+			if (!newText.isEmpty()) {
+				Toolkit.getDefaultToolkit().beep();
+			}
+		}
 	}
 }
