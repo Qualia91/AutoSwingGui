@@ -4,6 +4,7 @@ import com.nick.wood.swing_gui.utils.BeanChanger;
 import com.nick.wood.swing_gui.view.frames.EmptyWindow;
 import com.nick.wood.swing_gui.view.panels.fields.BooleanField;
 import com.nick.wood.swing_gui.view.panels.fields.ListField;
+import com.nick.wood.swing_gui.view.panels.fields.MapField;
 import com.nick.wood.swing_gui.view.panels.fields.PrimitiveField;
 import com.nick.wood.swing_gui.view.panels.objects.ClickableImagePanel;
 import com.nick.wood.swing_gui.view.panels.objects.FieldListPanel;
@@ -13,6 +14,7 @@ import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Map;
 
 public class GuiBuilder {
 
@@ -30,9 +32,10 @@ public class GuiBuilder {
 			try {
 				declaredField.setAccessible(true);
 				Class<?> type = declaredField.getType();
-				jPanels.add(switch (type.toString()) {
+				jPanels.add(switch (type.getSimpleName()) {
 					case "boolean" -> new BooleanField(declaredField, model, (boolean) declaredField.get(model), declaredField.getModifiers(), beanChanger);
-					case "class java.util.ArrayList" -> new ListField(declaredField, model, (ArrayList) declaredField.get(model), declaredField.getModifiers(), beanChanger);
+					case "ArrayList" -> new ListField(declaredField, model, (ArrayList) declaredField.get(model), declaredField.getModifiers(), beanChanger);
+					case "HashMap" -> new MapField(declaredField, model, (Map) declaredField.get(model), declaredField.getModifiers(), beanChanger);
 					default -> new PrimitiveField(declaredField, model, String.valueOf(declaredField.get(model)), declaredField.getModifiers(), beanChanger, type.toString());
 				});
 			} catch (IllegalAccessException e) {

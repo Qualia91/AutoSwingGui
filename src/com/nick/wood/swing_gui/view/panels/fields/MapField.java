@@ -6,6 +6,7 @@ import com.nick.wood.swing_gui.utils.ObjectCreationHelper;
 import com.nick.wood.swing_gui.view.GuiBuilder;
 import com.nick.wood.swing_gui.view.frames.EmptyWindow;
 import com.nick.wood.swing_gui.view.panels.objects.ClickableImagePanel;
+import com.nick.wood.swing_gui.view.panels.objects.MapEntryPanel;
 import com.nick.wood.swing_gui.view.panels.objects.Toolbar;
 
 import javax.swing.*;
@@ -15,23 +16,20 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.lang.reflect.*;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.function.Function;
 
-import static javax.swing.ScrollPaneConstants.*;
+import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED;
+import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED;
 
-public class ListField extends JPanel {
+public class MapField extends JPanel {
 	private final BeanChanger beanChanger;
 	private final JList<Object> jValue;
 	private final DefaultListModel<Object> defaultListModel;
-	private Class listType;
-	private final Field field;
-	private final Object model;
+	private Class[] mapTypes = new Class[2];
 
-	public ListField(Field field, Object model, ArrayList<Object> value, int modifiers, BeanChanger beanChanger) {
+	public MapField(Field field, Object model, Map<Object, Object> value, int modifiers, BeanChanger beanChanger) {
 
-		this.field = field;
-		this.model = model;
 		this.beanChanger = beanChanger;
 		String modifierString = Modifier.toString(modifiers);
 
@@ -43,15 +41,15 @@ public class ListField extends JPanel {
 		this.defaultListModel = new DefaultListModel<>();
 
 		ParameterizedType pt = (ParameterizedType) field.getGenericType();
-		for (Type t : pt.getActualTypeArguments()) {
+		for (int i = 0; i < 2; i++) {
 			try {
-				listType = Class.forName(t.getTypeName());
+				mapTypes[i] = Class.forName(pt.getActualTypeArguments()[i].getTypeName());
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			}
 		}
 
-		for (Object s : value) {
+		for (Object s : value.entrySet()) {
 			defaultListModel.addElement(s);
 		}
 		jValue.setModel(defaultListModel);
@@ -68,11 +66,11 @@ public class ListField extends JPanel {
 
 						try {
 
-							Object selectedValue = jValue.getSelectedValue();
+							Map.Entry selectedValue = (Map.Entry) jValue.getSelectedValue();
 
 							Runnable changeRun = () -> {
 								try {
-									((ArrayList) field.get(model)).remove(selectedValue);
+									((HashMap) field.get(model)).remove(selectedValue.getKey());
 									defaultListModel.removeElement(selectedValue);
 								} catch (IllegalAccessException illegalAccessException) {
 									illegalAccessException.printStackTrace();
@@ -81,14 +79,14 @@ public class ListField extends JPanel {
 
 							Runnable undoRun = () -> {
 								try {
-									((ArrayList) field.get(model)).add(selectedValue);
+									((HashMap) field.get(model)).put(selectedValue.getKey(), selectedValue.getValue());
 									defaultListModel.addElement(selectedValue);
 								} catch (IllegalAccessException illegalAccessException) {
 									illegalAccessException.printStackTrace();
 								}
 							};
 
-							((ArrayList) field.get(model)).remove(selectedValue);
+							((HashMap) field.get(model)).remove(selectedValue.getKey());
 							defaultListModel.removeElement(selectedValue);
 
 							Change change = new Change(changeRun, undoRun);
@@ -108,24 +106,27 @@ public class ListField extends JPanel {
 
 				if (e.getClickCount() == 2) {
 
+
 					SwingUtilities.invokeLater(() -> {
 
-						switch (jValue.getSelectedValue().getClass().getSimpleName()) {
+						Map.Entry selectedValue = (Map.Entry) jValue.getSelectedValue();
+
+						switch (selectedValue.getValue().getClass().getSimpleName()) {
 							case "String":
-								String oldValue = (String) jValue.getSelectedValue();
+								String oldValue = (String) selectedValue.getValue();
 								Object result = JOptionPane.showInputDialog("Edit " + oldValue.getClass().getTypeName(), oldValue);
-								usePopupData(result, oldValue, field, model);
+								usePopupData(result, oldValue, field, model, selectedValue.getKey());
 								break;
 							case "Integer":
-								editBox(Integer::parseInt, field, model);
+								editBox(Integer::parseInt, field, model, selectedValue.getKey(), selectedValue);
 								break;
 							case "Long":
-								editBox(Long::parseLong, field, model);
+								editBox(Long::parseLong, field, model, selectedValue.getKey(), selectedValue);
 								break;
 							case "Float":
-								editBox(Float::parseFloat, field, model);
+								editBox(Float::parseFloat, field, model, selectedValue.getKey(), selectedValue);
 							case "Double":
-								editBox(Double::parseDouble, field, model);
+								editBox(Double::parseDouble, field, model, selectedValue.getKey(), selectedValue);
 								break;
 
 							default: {
@@ -164,42 +165,44 @@ public class ListField extends JPanel {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				try {
+					Object[] os = createNewMapEntry(mapTypes, field, model);
 
+					Optional<Object[]> resultOptional = getMapEntrySanitised(os, ((HashMap) field.get(model)));
 
-					Object exampleObject = null;
-					if (!((ArrayList) field.get(model)).isEmpty()) {
-						exampleObject = ((ArrayList) field.get(model)).get(0);
-						// try and find copy() if objects already exist
+					if (resultOptional.isPresent()) {
+
+						Object key = resultOptional.get()[0];
+						Object value = resultOptional.get()[1];
+
+						Map.Entry entry = new AbstractMap.SimpleEntry(key, value);
+
+						Runnable changeRun = () -> {
+							try {
+								((HashMap) field.get(model)).put(key, value);
+								defaultListModel.addElement(entry);
+							} catch (IllegalAccessException illegalAccessException) {
+								illegalAccessException.printStackTrace();
+							}
+						};
+
+						Runnable undoRun = () -> {
+							try {
+								((HashMap) field.get(model)).remove(key);
+								defaultListModel.removeElement(entry);
+							} catch (IllegalAccessException illegalAccessException) {
+								illegalAccessException.printStackTrace();
+							}
+						};
+
+						((HashMap) field.get(model)).put(key, value);
+						defaultListModel.addElement(entry);
+
+						Change change = new Change(changeRun, undoRun);
+
+						beanChanger.applyChange(change);
 					}
-					Object o = ObjectCreationHelper.createNewObject(listType, exampleObject);
 
-
-					Runnable changeRun = () -> {
-						try {
-							((ArrayList) field.get(model)).add(o);
-							defaultListModel.addElement(o);
-						} catch (IllegalAccessException illegalAccessException) {
-							illegalAccessException.printStackTrace();
-						}
-					};
-
-					Runnable undoRun = () -> {
-						try {
-							((ArrayList) field.get(model)).remove(o);
-							defaultListModel.removeElement(o);
-						} catch (IllegalAccessException illegalAccessException) {
-							illegalAccessException.printStackTrace();
-						}
-					};
-
-					((ArrayList) field.get(model)).add(o);
-					defaultListModel.addElement(o);
-
-					Change change = new Change(changeRun, undoRun);
-
-					beanChanger.applyChange(change);
-
-				} catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException instantiationException) {
+				} catch (IllegalAccessException | InvocationTargetException | InstantiationException | NoSuchMethodException instantiationException) {
 					instantiationException.printStackTrace();
 				}
 			}
@@ -213,12 +216,62 @@ public class ListField extends JPanel {
 		add(jSplitPane);
 	}
 
-	private void usePopupData(Object result, Object oldValue, Field field, Object model) {
+	private Optional<Object[]> getMapEntrySanitised(Object[] os, HashMap hashMap) {
+
+		MapEntryPanel mapEntryPanel = new MapEntryPanel(mapTypes[0].getTypeName(), os[0], mapTypes[1].getTypeName(), os[1], beanChanger);
+
+		int result = JOptionPane.showConfirmDialog(null, mapEntryPanel, "New map entry of type key", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
+
+		if (result == JOptionPane.YES_OPTION) {
+			try {
+				Object key = ObjectCreationHelper.createNewObject(mapTypes[0], os[0]);
+				Object value = ObjectCreationHelper.createNewObject(mapTypes[1], os[1]);
+				if (hashMap.containsKey(key)) {
+					JOptionPane.showMessageDialog(null, "Key " + key + "already exists");
+				} else {
+					return Optional.of(new Object[]{key, value});
+				}
+			} catch (NumberFormatException numberFormatException) {
+				JOptionPane.showMessageDialog(null, numberFormatException);
+			} catch (InstantiationException e) {
+				e.printStackTrace();
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			} catch (NoSuchMethodException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException illegalAccessException) {
+				illegalAccessException.printStackTrace();
+			}
+
+		} else {
+			return Optional.empty();
+		}
+		return getMapEntrySanitised(os, hashMap);
+	}
+
+	private Object[] createNewMapEntry(Class[] mapTypes, Field field, Object model) throws IllegalAccessException, NoSuchMethodException, InstantiationException, InvocationTargetException {
+		Object exampleKeyObject = null;
+		Object exampleValObject = null;
+		if (!((HashMap) field.get(model)).isEmpty()) {
+			exampleKeyObject = ((HashMap) field.get(model)).keySet().toArray()[0];
+			exampleValObject = ((HashMap) field.get(model)).values().toArray()[0];
+			// try and find copy() if objects already exist
+		}
+		Object newObjectOne = ObjectCreationHelper.createNewObject(mapTypes[0], exampleKeyObject);
+		Object newObjectTwo = ObjectCreationHelper.createNewObject(mapTypes[1], exampleValObject);
+		return new Object[]{newObjectOne, newObjectTwo};
+	}
+
+	private void usePopupData(Object result, Object oldValue, Field field, Object model, Object key) {
 		if (result != null && !oldValue.equals(result)) {
+
+			Map.Entry oldEntry = new AbstractMap.SimpleEntry(key, oldValue);
+			Map.Entry newEntry = new AbstractMap.SimpleEntry(key, result);
+
 			Runnable changeRun = () -> {
 				try {
-					((ArrayList) field.get(model)).set(jValue.getSelectedIndex(), result);
-					defaultListModel.set(jValue.getSelectedIndex(), result);
+					((HashMap) field.get(model)).put(key, result);
+					defaultListModel.set(jValue.getSelectedIndex(), newEntry);
 				} catch (IllegalAccessException illegalAccessException) {
 					illegalAccessException.printStackTrace();
 				}
@@ -226,16 +279,16 @@ public class ListField extends JPanel {
 
 			Runnable undoRun = () -> {
 				try {
-					((ArrayList) field.get(model)).set(jValue.getSelectedIndex(), oldValue);
-					defaultListModel.set(jValue.getSelectedIndex(), oldValue);
+					((HashMap) field.get(model)).put(key, oldValue);
+					defaultListModel.set(jValue.getSelectedIndex(), oldEntry);
 				} catch (IllegalAccessException illegalAccessException) {
 					illegalAccessException.printStackTrace();
 				}
 			};
 
 			try {
-				((ArrayList) field.get(model)).set(jValue.getSelectedIndex(), result);
-				defaultListModel.set(jValue.getSelectedIndex(), result);
+				((HashMap) field.get(model)).put(key, result);
+				defaultListModel.set(jValue.getSelectedIndex(), newEntry);
 				jValue.repaint();
 			} catch (IllegalAccessException illegalAccessException) {
 				illegalAccessException.printStackTrace();
@@ -247,17 +300,17 @@ public class ListField extends JPanel {
 		}
 	}
 
-	private <X> void editBox(Function<String, X> castFunction, Field field, Object model) {
+	private <X> void editBox(Function<String, X> castFunction, Field field, Object model, Object key, Map.Entry selectedValue) {
 		boolean finished = false;
 		while (!finished) {
-			var oldValue = jValue.getSelectedValue();
+			var oldValue = selectedValue.getValue();
 			try {
 				String result = JOptionPane.showInputDialog("Edit " + oldValue.getClass().getTypeName(), oldValue);
 				if (result == null) {
 					return;
 				}
 				var castedResult = castFunction.apply(result);
-				usePopupData(castedResult, oldValue, field, model);
+				usePopupData(castedResult, oldValue, field, model, key);
 				finished = true;
 			} catch (Exception exception) {
 				JOptionPane.showMessageDialog(null, "Could not cast to correct type " + oldValue.getClass().getTypeName() + ", try again.");

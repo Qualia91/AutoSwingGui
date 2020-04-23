@@ -9,8 +9,8 @@ public class TestDataTwo {
 	private boolean bool;
 	private final boolean boolFinal;
 
-	public TestDataTwo(String id) {
-		this.id = id;
+	public TestDataTwo() {
+		this.id = "new";
 		name = "name";
 		number = -1;
 		number2 = -1.0;
@@ -65,6 +65,10 @@ public class TestDataTwo {
 
 	public boolean isBoolFinal() {
 		return boolFinal;
+	}
+
+	public TestDataTwo copy() {
+		return new TestDataTwo(id + "_copy", name, number, number2, bool, boolFinal);
 	}
 
 	@Override

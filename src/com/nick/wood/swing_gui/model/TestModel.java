@@ -1,6 +1,7 @@
 package com.nick.wood.swing_gui.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class TestModel {
 
@@ -13,6 +14,7 @@ public class TestModel {
 	private final ArrayList<String> testDataOnes = new ArrayList<>();
 	private final ArrayList<TestDataTwo> testDataTwos = new ArrayList<>();
 	private final ArrayList<Integer> testDataThrees = new ArrayList<>();
+	private final HashMap<TestDataTwo, Integer> hashMap = new HashMap<>();
 
 	public TestModel(String id, String name, int number, double number2, boolean bool) {
 		this.id = id;
@@ -24,12 +26,18 @@ public class TestModel {
 		this.testDataOnes.add("test");
 		this.testDataOnes.add("test2");
 		this.testDataOnes.add("test3");
-		this.testDataTwos.add(new TestDataTwo("id", "TestValue", 1, 2.3, true, false));
-		this.testDataTwos.add(new TestDataTwo("id", "TestValue", 1, 2.3, true, false));
-		this.testDataTwos.add(new TestDataTwo("id", "TestValue", 1, 2.3, true, false));
-		this.testDataThrees.add(1);
-		this.testDataThrees.add(2);
-		this.testDataThrees.add(3);
+		this.testDataTwos.add(new TestDataTwo("id", "TestValue1", 1, 2.3, true, false));
+		this.testDataTwos.add(new TestDataTwo("id", "TestValue2", 1, 2.3, true, false));
+		this.testDataTwos.add(new TestDataTwo("id", "TestValue3", 1, 2.3, true, false));
+		//this.testDataThrees.add(1);
+		//this.testDataThrees.add(2);
+		//this.testDataThrees.add(3);
+		hashMap.put(new TestDataTwo("id", "TestValue1", 1, 2.3, true, false), 1);
+		hashMap.put(new TestDataTwo("id", "TestValue1", 1, 2.3, true, false), 2);
+	}
+
+	public HashMap<TestDataTwo, Integer> getHashMap() {
+		return hashMap;
 	}
 
 	public String getId() {

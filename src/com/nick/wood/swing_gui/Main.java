@@ -9,7 +9,7 @@ import com.nick.wood.swing_gui.view.panels.objects.*;
 import com.nick.wood.swing_gui.view.frames.WindowContainer;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -28,6 +28,7 @@ public class Main {
 			try {
 				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 				UIManager.getDefaults().put("SplitPane.border", BorderFactory.createEmptyBorder());
+				//UIManager.getDefaults().put("SplitPane.background", new Color(0, 0, 0));
 			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
 				e.printStackTrace();
 			}
@@ -62,7 +63,6 @@ public class Main {
 
 			Toolbar toolbar = new Toolbar(clickableImagePanels);
 
-
 			GuiBuilder guiBuilder = new GuiBuilder(testModel, beanChanger, toolbar);
 			beanChanger.attachBeanChangerListener(() -> guiBuilder.beanActive(backButton, forwardButton));
 
@@ -77,6 +77,23 @@ public class Main {
 
 
 		});
+
+		//while (true) {
+//
+		//	System.out.println("LOOP.......");
+		//	testModel.getHashMap().forEach((integer, aDouble) -> {
+		//		System.out.println("Entry");
+		//		System.out.println(integer);
+		//		System.out.println(aDouble);
+		//	});
+		//	System.out.println("");
+		//	System.out.println("");
+		//	try {
+		//		Thread.sleep(1000);
+		//	} catch (InterruptedException e) {
+		//		e.printStackTrace();
+		//	}
+		//}
 
 	}
 
