@@ -38,6 +38,12 @@ public class DecimalDocumentFilter extends DocumentFilter {
 
 		Change change = new Change(model, field, obj -> jValue.setText(obj.toString()), newValue, oldValue);
 
+		try {
+			field.set(model, newValue);
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+
 		beanChanger.applyChange(change);
 		super.remove(fb, offset, length);
 	}
@@ -54,9 +60,15 @@ public class DecimalDocumentFilter extends DocumentFilter {
 			double oldValue = Double.parseDouble(oldText);
 			Change change = new Change(model, field, obj -> jValue.setText(obj.toString()), val, oldValue);
 
-			beanChanger.applyChange(change);
+			try {
+				field.set(model, val);
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
 
+			beanChanger.applyChange(change);
 			super.insertString(fb, offs, str, attr);
+
 		} else {
 			if (!newText.isEmpty()) {
 				Toolkit.getDefaultToolkit().beep();
@@ -79,9 +91,15 @@ public class DecimalDocumentFilter extends DocumentFilter {
 			double oldValue = Double.parseDouble(oldText);
 			Change change = new Change(model, field, obj -> jValue.setText(obj.toString()), val, oldValue);
 
-			beanChanger.applyChange(change);
+			try {
+				field.set(model, val);
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			}
 
+			beanChanger.applyChange(change);
 			super.replace(fb, offs, length, str, attrs);
+
 		} else {
 			if (!newText.isEmpty()) {
 				Toolkit.getDefaultToolkit().beep();

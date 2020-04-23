@@ -68,30 +68,33 @@ public class MapField extends JPanel {
 
 							Map.Entry selectedValue = (Map.Entry) jValue.getSelectedValue();
 
-							Runnable changeRun = () -> {
-								try {
-									((HashMap) field.get(model)).remove(selectedValue.getKey());
-									defaultListModel.removeElement(selectedValue);
-								} catch (IllegalAccessException illegalAccessException) {
-									illegalAccessException.printStackTrace();
-								}
-							};
+							if (selectedValue != null) {
 
-							Runnable undoRun = () -> {
-								try {
-									((HashMap) field.get(model)).put(selectedValue.getKey(), selectedValue.getValue());
-									defaultListModel.addElement(selectedValue);
-								} catch (IllegalAccessException illegalAccessException) {
-									illegalAccessException.printStackTrace();
-								}
-							};
+								Runnable changeRun = () -> {
+									try {
+										((HashMap) field.get(model)).remove(selectedValue.getKey());
+										defaultListModel.removeElement(selectedValue);
+									} catch (IllegalAccessException illegalAccessException) {
+										illegalAccessException.printStackTrace();
+									}
+								};
 
-							((HashMap) field.get(model)).remove(selectedValue.getKey());
-							defaultListModel.removeElement(selectedValue);
+								Runnable undoRun = () -> {
+									try {
+										((HashMap) field.get(model)).put(selectedValue.getKey(), selectedValue.getValue());
+										defaultListModel.addElement(selectedValue);
+									} catch (IllegalAccessException illegalAccessException) {
+										illegalAccessException.printStackTrace();
+									}
+								};
 
-							Change change = new Change(changeRun, undoRun);
+								((HashMap) field.get(model)).remove(selectedValue.getKey());
+								defaultListModel.removeElement(selectedValue);
 
-							beanChanger.applyChange(change);
+								Change change = new Change(changeRun, undoRun);
+
+								beanChanger.applyChange(change);
+							}
 						} catch (IllegalAccessException illegalAccessException) {
 							illegalAccessException.printStackTrace();
 						}
@@ -130,7 +133,7 @@ public class MapField extends JPanel {
 								break;
 
 							default: {
-								GuiBuilder guiBuilder = new GuiBuilder(jValue.getSelectedValue(), beanChanger, new Toolbar("Edit " + jValue.getSelectedValue().getClass().getTypeName()));
+								GuiBuilder guiBuilder = new GuiBuilder(selectedValue.getValue(), beanChanger, new Toolbar("Edit " + jValue.getSelectedValue().getClass().getTypeName()));
 								EmptyWindow emptyWindow = new EmptyWindow(800, 600, guiBuilder.getFieldListPanel());
 								emptyWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 								break;
@@ -233,14 +236,8 @@ public class MapField extends JPanel {
 				}
 			} catch (NumberFormatException numberFormatException) {
 				JOptionPane.showMessageDialog(null, numberFormatException);
-			} catch (InstantiationException e) {
+			} catch (InstantiationException | InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
 				e.printStackTrace();
-			} catch (InvocationTargetException e) {
-				e.printStackTrace();
-			} catch (NoSuchMethodException e) {
-				e.printStackTrace();
-			} catch (IllegalAccessException illegalAccessException) {
-				illegalAccessException.printStackTrace();
 			}
 
 		} else {

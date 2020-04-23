@@ -136,6 +136,8 @@ public class ListField extends JPanel {
 							}
 						}
 
+						jValue.repaint();
+
 					});
 				}
 			}

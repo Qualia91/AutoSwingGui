@@ -35,7 +35,11 @@ public class IntegerDocumentFilter extends DocumentFilter {
 		int oldValue = Integer.parseInt(oldText);
 
 		Change change = new Change(model, field, obj -> jValue.setText(obj.toString()), newValue, oldValue);
-
+		try {
+			field.set(model, newValue);
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
 		beanChanger.applyChange(change);
 		super.remove(fb, offset, length);
 	}
@@ -46,7 +50,6 @@ public class IntegerDocumentFilter extends DocumentFilter {
 				fb.getDocument().getLength());
 		String newText = str;
 		if (newText.length() <= 9 && newText.matches("^[0-9]+")) {
-			super.insertString(fb, offs, str, attr);
 			int val = Integer.parseInt(newText);
 			int oldValue = Integer.parseInt(oldText);
 
@@ -57,6 +60,7 @@ public class IntegerDocumentFilter extends DocumentFilter {
 				e.printStackTrace();
 			}
 			beanChanger.applyChange(change);
+			super.insertString(fb, offs, str, attr);
 		} else {
 			if (!newText.isEmpty()) {
 				Toolkit.getDefaultToolkit().beep();
@@ -72,8 +76,10 @@ public class IntegerDocumentFilter extends DocumentFilter {
 		String newText = oldText.substring(0, offs) + str + oldText.substring(length + offs);
 
 		if (newText.length() <= 9 && newText.matches("^[0-9]+") ) {
-			super.replace(fb, offs, length, str, attrs);
 			int val = Integer.parseInt(newText);
+			if (oldText.isEmpty()) {
+				oldText = "0";
+			}
 			int oldValue = Integer.parseInt(oldText);
 			Change change = new Change(model, field, obj -> jValue.setText(obj.toString()), val, oldValue);
 			try {
@@ -82,6 +88,7 @@ public class IntegerDocumentFilter extends DocumentFilter {
 				e.printStackTrace();
 			}
 			beanChanger.applyChange(change);
+			super.replace(fb, offs, length, str, attrs);
 		} else {
 			if (!newText.isEmpty()) {
 				Toolkit.getDefaultToolkit().beep();

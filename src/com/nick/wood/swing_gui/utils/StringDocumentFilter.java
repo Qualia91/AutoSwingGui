@@ -26,10 +26,15 @@ public class StringDocumentFilter extends DocumentFilter {
 		String oldText = fb.getDocument().getText(0,
 				fb.getDocument().getLength());
 
-		String newText = oldText.substring(0, offset) + oldText.substring(length + offset);
+		String newText = oldText.substring(0, offset);
 
 		Change change = new Change(model, field, obj -> jValue.setText(obj.toString()), newText, oldText);
 
+		try {
+			field.set(model, newText);
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
 		beanChanger.applyChange(change);
 		super.remove(fb, offset, length);
 	}
@@ -40,7 +45,11 @@ public class StringDocumentFilter extends DocumentFilter {
 				fb.getDocument().getLength());
 
 		Change change = new Change(model, field, obj -> jValue.setText(obj.toString()), str, oldText);
-
+		try {
+			field.set(model, str);
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
 		beanChanger.applyChange(change);
 		super.insertString(fb, offs, str, attr);
 	}
@@ -53,6 +62,12 @@ public class StringDocumentFilter extends DocumentFilter {
 		String newText = oldText.substring(0, offs) + str + oldText.substring(length + offs);
 
 		Change change = new Change(model, field, obj -> jValue.setText(obj.toString()), newText, oldText);
+
+		try {
+			field.set(model, newText);
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
 
 		beanChanger.applyChange(change);
 		super.replace(fb, offs, length, str, attrs);

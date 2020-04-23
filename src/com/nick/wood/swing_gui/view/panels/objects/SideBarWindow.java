@@ -51,13 +51,13 @@ public class SideBarWindow extends JPanel {
 			jSplitPane.setDividerLocation(ratio);
 		};
 
-		Timer timerClose = new Timer(1, closedAction);
-		Timer timerOpen = new Timer(1, openAction);
+		Timer timerClose = new Timer(0, closedAction);
+		Timer timerOpen = new Timer(0, openAction);
 
 		changeActionOne.accept(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				delta = ratio / 10.0;
+				delta = openRatio / 5.0;
 				timerClose.start();
 			}
 		});
@@ -65,7 +65,7 @@ public class SideBarWindow extends JPanel {
 		changeActionTwo.accept(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				delta = openRatio / 10.0;
+				delta = openRatio / 5.0;
 				timerOpen.start();
 			}
 		});

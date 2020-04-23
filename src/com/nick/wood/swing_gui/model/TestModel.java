@@ -15,6 +15,7 @@ public class TestModel {
 	private final ArrayList<TestDataTwo> testDataTwos = new ArrayList<>();
 	private final ArrayList<Integer> testDataThrees = new ArrayList<>();
 	private final HashMap<TestDataTwo, Integer> hashMap = new HashMap<>();
+	private final HashMap<TestDataTwo, TestDataTwo> hashMap2 = new HashMap<>();
 
 	public TestModel(String id, String name, int number, double number2, boolean bool) {
 		this.id = id;
@@ -26,7 +27,8 @@ public class TestModel {
 		this.testDataOnes.add("test");
 		this.testDataOnes.add("test2");
 		this.testDataOnes.add("test3");
-		this.testDataTwos.add(new TestDataTwo("id", "TestValue1", 1, 2.3, true, false));
+		TestDataTwo testDataTwo = new TestDataTwo("id", "TestValue1", 1, 2.3, true, false);
+		this.testDataTwos.add(testDataTwo);
 		this.testDataTwos.add(new TestDataTwo("id", "TestValue2", 1, 2.3, true, false));
 		this.testDataTwos.add(new TestDataTwo("id", "TestValue3", 1, 2.3, true, false));
 		//this.testDataThrees.add(1);
@@ -34,6 +36,7 @@ public class TestModel {
 		//this.testDataThrees.add(3);
 		hashMap.put(new TestDataTwo("id", "TestValue1", 1, 2.3, true, false), 1);
 		hashMap.put(new TestDataTwo("id", "TestValue1", 1, 2.3, true, false), 2);
+		hashMap2.put(testDataTwo, new TestDataTwo("id", "TestValue1", 1, 2.3, true, false));
 	}
 
 	public HashMap<TestDataTwo, Integer> getHashMap() {

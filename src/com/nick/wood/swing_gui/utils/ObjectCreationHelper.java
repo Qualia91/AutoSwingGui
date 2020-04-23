@@ -1,13 +1,12 @@
 package com.nick.wood.swing_gui.utils;
 
 import java.lang.reflect.*;
-import java.util.ArrayList;
 
 public class ObjectCreationHelper {
 
-	public static Object createNewObject(Class listClass, Object exampleObject) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
-		Constructor<? extends Type> constructor;
-		Object o = null;
+	public static Object createNewObject(Class<?> listClass, Object exampleObject) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
+		Constructor<?> constructor;
+		Object o;
 		switch (listClass.getTypeName().toLowerCase()) {
 			case "java.lang.string":
 				o = "New Object";
@@ -36,7 +35,7 @@ public class ObjectCreationHelper {
 				}
 
 				// if not just use default constructor. this will all come crashing down if that doesnt exist
-				constructor = listClass.getClass().getConstructor();
+				constructor = listClass.getConstructor();
 				o = constructor.newInstance();
 		}
 
