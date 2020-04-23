@@ -1,7 +1,6 @@
 package com.nick.wood.swing_gui.view;
 
 import com.nick.wood.swing_gui.utils.BeanChanger;
-import com.nick.wood.swing_gui.view.frames.EmptyWindow;
 import com.nick.wood.swing_gui.view.panels.fields.BooleanField;
 import com.nick.wood.swing_gui.view.panels.fields.ListField;
 import com.nick.wood.swing_gui.view.panels.fields.MapField;
@@ -11,7 +10,6 @@ import com.nick.wood.swing_gui.view.panels.objects.FieldListPanel;
 import com.nick.wood.swing_gui.view.panels.objects.Toolbar;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Map;
