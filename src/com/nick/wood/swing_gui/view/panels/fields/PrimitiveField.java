@@ -10,36 +10,23 @@ import java.lang.reflect.Modifier;
 
 public class PrimitiveField extends JPanel {
 
-	private final BeanChanger beanChanger;
-	private final JLabel jLabelName;
-	private final JComponent jValue;
-
 	public PrimitiveField(Field field, Object model, String value, int modifiers, BeanChanger beanChanger, String typeString) {
 
-		this.beanChanger = beanChanger;
 		String modifierString = Modifier.toString(modifiers);
 
-		this.jLabelName = new JLabel(field.getName());
+		JLabel jLabelName = new JLabel(field.getName());
 
+		JComponent jValue;
 		if (modifierString.contains("final")) {
-			this.jValue = new JLabel(value);
+			jValue = new JLabel(value);
 		} else {
-			this.jValue = new JTextField(value);
+			jValue = new JTextField(value);
 
 			switch (typeString) {
-				case "long":
-					((AbstractDocument) ((JTextField) jValue).getDocument()).setDocumentFilter(new LongDocumentFilter(beanChanger, ((JTextField) jValue), field, model));
-					break;
-				case "int":
-					((AbstractDocument) ((JTextField) jValue).getDocument()).setDocumentFilter(new IntegerDocumentFilter(beanChanger, ((JTextField) jValue), field, model));
-					break;
-				case "float":
-				case "double":
-					((AbstractDocument) ((JTextField) jValue).getDocument()).setDocumentFilter(new DecimalDocumentFilter(beanChanger, ((JTextField) jValue), field, model));
-					break;
-				default:
-					((AbstractDocument) ((JTextField) jValue).getDocument()).setDocumentFilter(new StringDocumentFilter(beanChanger, ((JTextField) jValue), field, model));
-					break;
+				case "long" -> ((AbstractDocument) ((JTextField) jValue).getDocument()).setDocumentFilter(new LongDocumentFilter(beanChanger, ((JTextField) jValue), field, model));
+				case "int" -> ((AbstractDocument) ((JTextField) jValue).getDocument()).setDocumentFilter(new IntegerDocumentFilter(beanChanger, ((JTextField) jValue), field, model));
+				case "float", "double" -> ((AbstractDocument) ((JTextField) jValue).getDocument()).setDocumentFilter(new DecimalDocumentFilter(beanChanger, ((JTextField) jValue), field, model));
+				default -> ((AbstractDocument) ((JTextField) jValue).getDocument()).setDocumentFilter(new StringDocumentFilter(beanChanger, ((JTextField) jValue), field, model));
 			}
 
 		}
