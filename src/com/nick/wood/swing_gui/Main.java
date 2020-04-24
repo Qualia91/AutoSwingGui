@@ -1,5 +1,7 @@
 package com.nick.wood.swing_gui;
 
+import com.nick.wood.swing_gui.class_builder.ClassBuilder;
+import com.nick.wood.swing_gui.class_builder.FieldObject;
 import com.nick.wood.swing_gui.model.TestDataTwo;
 import com.nick.wood.swing_gui.model.TestModel;
 import com.nick.wood.swing_gui.utils.BeanChanger;
@@ -13,22 +15,38 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.function.Consumer;
 
 public class Main {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws NoSuchMethodException, IllegalAccessException, InstantiationException, IOException, InvocationTargetException, ClassNotFoundException {
 
 
-		TestModel testModel = new TestModel("id", "TestValue", 1, 2.3, true);
+		//TestModel testModel = new TestModel("id", "TestValue", 1, 2.3, true);
+
+		ClassBuilder classBuilder = new ClassBuilder("MyClass", "com.nick.wood.swing_gui.dynamic_classes");
+
+		ArrayList<String> modifiers = new ArrayList<>();
+		modifiers.add("private");
+
+		FieldObject fieldObjectOne = new FieldObject(modifiers, "int");
+		FieldObject fieldObjectTwo = new FieldObject(modifiers, "String");
+		FieldObject fieldObjectThree = new FieldObject(modifiers, "double");
+
+		classBuilder.addField("fieldOne", fieldObjectOne);
+		classBuilder.addField("fieldTwo", fieldObjectTwo);
+		classBuilder.addField("fieldThree", fieldObjectThree);
+
+		Object testModel = classBuilder.buildClass();
 
 		SwingUtilities.invokeLater(() -> {
 
 			try {
 				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 				UIManager.getDefaults().put("SplitPane.border", BorderFactory.createEmptyBorder());
-				//UIManager.getDefaults().put("SplitPane.background", new Color(0, 0, 0));
 			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
 				e.printStackTrace();
 			}
