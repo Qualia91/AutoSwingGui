@@ -1,9 +1,8 @@
 package com.nick.wood.swing_gui;
 
 import com.nick.wood.swing_gui.class_builder.ClassBuilder;
+import com.nick.wood.swing_gui.class_builder.ConstructorObject;
 import com.nick.wood.swing_gui.class_builder.FieldObject;
-import com.nick.wood.swing_gui.model.TestDataTwo;
-import com.nick.wood.swing_gui.model.TestModel;
 import com.nick.wood.swing_gui.utils.BeanChanger;
 import com.nick.wood.swing_gui.view.GuiBuilder;
 import com.nick.wood.swing_gui.view.frames.EmptyWindow;
@@ -11,36 +10,51 @@ import com.nick.wood.swing_gui.view.panels.objects.*;
 import com.nick.wood.swing_gui.view.frames.WindowContainer;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.function.Consumer;
 
 public class Main {
 
 	public static void main(String[] args) throws NoSuchMethodException, IllegalAccessException, InstantiationException, IOException, InvocationTargetException, ClassNotFoundException {
 
-
-		//TestModel testModel = new TestModel("id", "TestValue", 1, 2.3, true);
-
 		ClassBuilder classBuilder = new ClassBuilder("MyClass", "com.nick.wood.swing_gui.dynamic_classes");
 
 		ArrayList<String> modifiers = new ArrayList<>();
 		modifiers.add("private");
 
-		FieldObject fieldObjectOne = new FieldObject(modifiers, "int");
-		FieldObject fieldObjectTwo = new FieldObject(modifiers, "String");
-		FieldObject fieldObjectThree = new FieldObject(modifiers, "double");
+		classBuilder.addImport("java.util.ArrayList");
+		classBuilder.addImport("java.util.HashMap");
+
+		FieldObject fieldObjectOne = new FieldObject(modifiers, "int", 1);
+		FieldObject fieldObjectTwo = new FieldObject(modifiers, "String", "Hello");
+		FieldObject fieldObjectThree = new FieldObject(modifiers, "double", 2.0);
+		FieldObject fieldObjectFour = new FieldObject(modifiers, "ArrayList<String>", new ArrayList<>());
+		FieldObject fieldObjectFive = new FieldObject(modifiers, "HashMap<String, Double>", new HashMap<>());
 
 		classBuilder.addField("fieldOne", fieldObjectOne);
 		classBuilder.addField("fieldTwo", fieldObjectTwo);
 		classBuilder.addField("fieldThree", fieldObjectThree);
+		classBuilder.addField("fieldFour", fieldObjectFour);
+		classBuilder.addField("fieldFive", fieldObjectFive);
 
-		Object testModel = classBuilder.buildClass();
+		ArrayList<String> inputTypes = new ArrayList<>();
+		inputTypes.add("int");
+		inputTypes.add("double");
+		ArrayList<String> inputNames = new ArrayList<>();
+		inputNames.add("fieldOne");
+		inputNames.add("fieldThree");
+		ConstructorObject constructorObject = new ConstructorObject(inputTypes, inputNames);
+		classBuilder.addConstructor(constructorObject);
+
+		Class<?> testModelClass = classBuilder.buildClass();
+
+		Object testModel = testModelClass.getConstructor(int.class, double.class).newInstance(12342, 24.536);
 
 		SwingUtilities.invokeLater(() -> {
 
