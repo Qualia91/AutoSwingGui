@@ -24,7 +24,5 @@ public class FieldListPanel extends JPanel {
 			add(jPanels.get(index), gbc);
 		}
 
-
-
 	}
 }

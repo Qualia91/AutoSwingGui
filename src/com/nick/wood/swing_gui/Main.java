@@ -13,16 +13,34 @@ import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.function.Consumer;
 
 public class Main {
 
-	public static void main(String[] args) throws NoSuchMethodException, IllegalAccessException, InstantiationException, IOException, InvocationTargetException, ClassNotFoundException {
+	public static void main(String[] args) throws Exception {
 
+		objectMover();
+
+	}
+
+	private static void objectMover() {
+
+		SwingUtilities.invokeLater(() -> {
+
+			try {
+				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+				UIManager.getDefaults().put("SplitPane.border", BorderFactory.createEmptyBorder());
+			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
+				e.printStackTrace();
+			}
+
+		});
+
+	}
+
+	private static void autoGui() throws Exception {
 		ClassBuilder classBuilder = new ClassBuilder("MyClass", "com.nick.wood.swing_gui.dynamic_classes");
 
 		ArrayList<String> modifiers = new ArrayList<>();
@@ -68,7 +86,7 @@ public class Main {
 			BeanChanger beanChanger = new BeanChanger();
 
 			ClickableImagePanel backButton = new ClickableImagePanel("/icons/icon.png");
-			backButton.getLabel().addMouseListener( new MouseAdapter() {
+			backButton.getLabel().addMouseListener(new MouseAdapter() {
 				@Override
 				public void mouseClicked(MouseEvent e) {
 					beanChanger.undo();
@@ -104,33 +122,11 @@ public class Main {
 					minimiseButton::attachEventListener,
 					buttonPanel2::attachEventListener);
 
-			EmptyWindow emptyWindow = new EmptyWindow(1000, 800, sideBarWindow);
+			EmptyWindow emptyWindow = new EmptyWindow(1000, 800, guiBuilder.getFieldListPanel());
 			emptyWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 
 		});
-
-		//while (true) {
-//
-		//	System.out.println("LOOP.......");
-		//	testModel.getHashMap().forEach((integer, aDouble) -> {
-		//		System.out.println("Entry");
-		//		System.out.println(integer);
-		//		System.out.println(aDouble);
-		//	});
-		//	System.out.println("");
-		//	System.out.println("");
-		//	try {
-		//		Thread.sleep(1000);
-		//	} catch (InterruptedException e) {
-		//		e.printStackTrace();
-		//	}
-		//}
-
-	}
-
-	private void autoGui() {
-
 	}
 
 	private void tabPanel() {

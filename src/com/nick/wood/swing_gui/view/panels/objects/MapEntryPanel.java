@@ -2,7 +2,6 @@ package com.nick.wood.swing_gui.view.panels.objects;
 
 import com.nick.wood.swing_gui.utils.BeanChanger;
 import com.nick.wood.swing_gui.view.GuiBuilder;
-import com.nick.wood.swing_gui.view.frames.EmptyWindow;
 
 import javax.swing.*;
 import java.awt.*;
@@ -72,6 +71,8 @@ public class MapEntryPanel extends JPanel {
 		pane.add(val2TextField);
 
 		add(pane);
+
+
 	}
 
 	public JTextField getVal1TextField() {

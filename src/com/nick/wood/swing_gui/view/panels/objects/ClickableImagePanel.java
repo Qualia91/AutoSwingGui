@@ -32,12 +32,14 @@ public class ClickableImagePanel extends JPanel {
 			public void mouseEntered(MouseEvent e) {
 				if (isEnabled()) {
 					label.setBorder(hoverOverLineBorder);
+					getRootPane().repaint();
 				}
 			}
 
 			@Override
 			public void mouseExited(MouseEvent e) {
 				label.setBorder(normalLineBorder);
+				getRootPane().repaint();
 			}
 		};
 
@@ -65,5 +67,9 @@ public class ClickableImagePanel extends JPanel {
 
 	public void attachEventListener(EventListener eventListener) {
 		label.addMouseListener((MouseListener) eventListener);
+	}
+
+	public ImageIcon getImageIcon() {
+		return imageIcon;
 	}
 }

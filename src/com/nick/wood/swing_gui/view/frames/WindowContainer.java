@@ -1,7 +1,5 @@
 package com.nick.wood.swing_gui.view.frames;
 
-import net.miginfocom.swing.MigLayout;
-
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;

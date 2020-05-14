@@ -3,7 +3,6 @@ package com.nick.wood.swing_gui.view.panels.windows;
 import com.nick.wood.swing_gui.tree.Node;
 import com.nick.wood.swing_gui.view.panels.objects.TextPanel;
 import com.nick.wood.swing_gui.view.panels.objects.Toolbar;
-import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import java.awt.*;
