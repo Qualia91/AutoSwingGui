@@ -4,16 +4,18 @@ import com.nick.wood.swing_gui.listeners.MouseDragObjectListener;
 import com.nick.wood.swing_gui.utils.Line;
 import com.nick.wood.swing_gui.view.panels.objects.ClickableImagePanel;
 import com.nick.wood.swing_gui.view.panels.objects.DraggableItemPanel;
+import com.nick.wood.swing_gui.view.panels.objects.DrawableLayeredPane;
+import com.nick.wood.swing_gui.view.panels.objects.JPanelConnection;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.Line2D;
 import java.util.ArrayList;
 
 public class DragContextWindow extends JFrame {
 
 	private final ArrayList<DraggableItemPanel> panels;
+	private final DrawableLayeredPane jLayeredPane;
 	private DraggableItemPanel lastSelected;
 
 	private Point mousePressed;
@@ -21,25 +23,29 @@ public class DragContextWindow extends JFrame {
 	private boolean drawing = false;
 
 	ClickableImagePanel startClickableButton = null;
-	private ArrayList<Line> lines = new ArrayList<>();
 
 	public DragContextWindow(int width, int height, ArrayList<DraggableItemPanel> other) {
+
+		this.jLayeredPane = new DrawableLayeredPane();
+		jLayeredPane.setMinimumSize(new Dimension(width, height));
+
+		add(jLayeredPane);
 
 		this.panels = new ArrayList<>();
 		CustomGlassPane customGlassPane = new CustomGlassPane(this);
 
-		for (int i = 0; i < 1; i++) {
+		for (int i = 0; i < 10; i++) {
 			DraggableItemPanel draggableItemPanel = new DraggableItemPanel("" + i);
-			for (ClickableImagePanel westClickableButton : draggableItemPanel.getWestClickableButtons()) {
-				westClickableButton.attachEventListener(new MouseAdapter() {
+			for (ClickableImagePanel eastClickableButton : draggableItemPanel.getEastClickableButtons()) {
+				eastClickableButton.attachEventListener(new MouseAdapter() {
 					@Override
 					public void mouseClicked(MouseEvent e) {
 						if (!drawing) {
 							drawing = true;
-							Point point = SwingUtilities.convertPoint(westClickableButton.getLabel(), westClickableButton.getLabel().getX(), westClickableButton.getLabel().getY(), DragContextWindow.this);
+							Point point = SwingUtilities.convertPoint(eastClickableButton.getLabel(), eastClickableButton.getLabel().getX(), eastClickableButton.getLabel().getY(), DragContextWindow.this);
 							customGlassPane.setStartPoint(point);
 							getGlassPane().setVisible(true);
-							startClickableButton = westClickableButton;
+							startClickableButton = eastClickableButton;
 						}
 					}
 				});
@@ -47,19 +53,18 @@ public class DragContextWindow extends JFrame {
 			panels.add(draggableItemPanel);
 		}
 
-
 		int starting = 0;
 
 		for (DraggableItemPanel panel : panels) {
 			panel.setLocation(panel.getX() + starting, panel.getY() + starting);
 			starting += 50;
-			add(panel);
+			jLayeredPane.add(panel);
 			MouseDragObjectListener mouseDragObjectListener = new MouseDragObjectListener(panel, this);
 			panel.addMouseListener(mouseDragObjectListener);
 			panel.addMouseMotionListener(mouseDragObjectListener);
 		}
 
-		addMouseListener(new MouseAdapter() {
+		jLayeredPane.addMouseListener(new MouseAdapter() {
 
 			@Override
 			public void mouseClicked(MouseEvent e) {
@@ -75,7 +80,7 @@ public class DragContextWindow extends JFrame {
 			}
 		});
 
-		addMouseMotionListener(new MouseAdapter() {
+		jLayeredPane.addMouseMotionListener(new MouseAdapter() {
 			@Override
 			public void mouseDragged(MouseEvent e) {
 				int dx = e.getX() - mousePressed.x;
@@ -98,11 +103,26 @@ public class DragContextWindow extends JFrame {
 			public void keyTyped(KeyEvent e) {
 				if (e.getKeyCode() == 0) {
 					if (lastSelected != null) {
+						System.out.println(lastSelected);
 						panels.remove(lastSelected);
-						remove(lastSelected);
+						jLayeredPane.remove(lastSelected);
+						ArrayList<JPanelConnection> remove = new ArrayList<>();
+						for (JPanelConnection connection : jLayeredPane.getConnections()) {
+							for (ClickableImagePanel westClickableButton : lastSelected.getWestClickableButtons()) {
+								if (westClickableButton.getLabel().equals(connection.getjPanelTwo())) {
+									remove.add(connection);
+								}
+							}
+							for (ClickableImagePanel eastClickableButton : lastSelected.getEastClickableButtons()) {
+								if (eastClickableButton.getLabel().equals(connection.getjPanelOne())) {
+									remove.add(connection);
+								}
+							}
+						}
+						jLayeredPane.getConnections().removeAll(remove);
 						lastSelected = null;
-						revalidate();
-						repaint();
+						jLayeredPane.revalidate();
+						jLayeredPane.repaint();
 					}
 				}
 			}
@@ -111,7 +131,6 @@ public class DragContextWindow extends JFrame {
 
 		setGlassPane(customGlassPane);
 
-		setLayout(null);
 		setVisible(true);
 		super.setSize(width, height);
 		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -136,37 +155,30 @@ public class DragContextWindow extends JFrame {
 		ClickableImagePanel endClickableButton = null;
 
 		for (DraggableItemPanel panel : panels) {
-			for (ClickableImagePanel eastClickableButton : panel.getEastClickableButtons()) {
+			for (ClickableImagePanel westClickableButton : panel.getWestClickableButtons()) {
 				// find position of button
-				Point pt = new Point(eastClickableButton.getLabel().getLocation());
-				Point point = SwingUtilities.convertPoint(eastClickableButton.getLabel(), pt.x, pt.y, DragContextWindow.this);
+				Point pt = new Point(westClickableButton.getLabel().getLocation());
+				Point point = SwingUtilities.convertPoint(westClickableButton.getLabel(), pt.x, pt.y, DragContextWindow.this);
 
 				// find width and height
-				int width = eastClickableButton.getLabel().getWidth();
-				int height = eastClickableButton.getLabel().getHeight();
+				int width = westClickableButton.getLabel().getWidth();
+				int height = westClickableButton.getLabel().getHeight();
 
 				// do some maths
 				if (checkConstraints(line, point, width, height) == 2) {
-					endClickableButton = eastClickableButton;
+					endClickableButton = westClickableButton;
 				}
 			}
 		}
 
 		if (endClickableButton != null) {
-			System.out.println("match found");
-			lines.add(line);
-			repaint();
+			jLayeredPane.getConnections().add(new JPanelConnection(startClickableButton.getLabel(), endClickableButton.getLabel()));
+			jLayeredPane.repaint();
 		}
 	}
 
-	@Override
-	public void paint(Graphics g) {
-		for (Line currentLine : lines) {
-			Graphics2D g2 = (Graphics2D) g;
-			Line2D lin = new Line2D.Float(currentLine.getX1(), currentLine.getY1(), currentLine.getX2(), currentLine.getY2());
-			g2.draw(lin);
-		}
-		super.paint(g);  // fixes the immediate problem.
+	public DrawableLayeredPane getjLayeredPane() {
+		return jLayeredPane;
 	}
 
 	/**

@@ -3,11 +3,11 @@ package com.nick.wood.swing_gui.utils;
 import java.awt.*;
 
 public class Line{
-	final private int x1;
-	final private int y1;
-	final private int x2;
-	final private int y2;
-	final private Color color;
+	private int x1;
+	private int y1;
+	private int x2;
+	private int y2;
+	private Color color;
 
 	public Line(int x1, int y1, int x2, int y2, Color color) {
 		this.x1 = x1;
@@ -33,8 +33,36 @@ public class Line{
 		return y2;
 	}
 
+	public void setX1(int x1) {
+		this.x1 = x1;
+	}
+
+	public void setY1(int y1) {
+		this.y1 = y1;
+	}
+
+	public void setX2(int x2) {
+		this.x2 = x2;
+	}
+
+	public void setY2(int y2) {
+		this.y2 = y2;
+	}
+
+	public void setColor(Color color) {
+		this.color = color;
+	}
+
 	public Color getColor() {
 		return color;
+	}
+
+	public void translate(int dx, int dy) {
+		System.out.println("TRanslating");
+		x1 += dx;
+		x2 += dx;
+		y1 += dy;
+		y2 += dy;
 	}
 }
 
