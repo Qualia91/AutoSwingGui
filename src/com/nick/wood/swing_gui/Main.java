@@ -5,11 +5,13 @@ import com.nick.wood.swing_gui.class_builder.ConstructorObject;
 import com.nick.wood.swing_gui.class_builder.FieldObject;
 import com.nick.wood.swing_gui.utils.BeanChanger;
 import com.nick.wood.swing_gui.view.GuiBuilder;
+import com.nick.wood.swing_gui.view.frames.DragContextWindow;
 import com.nick.wood.swing_gui.view.frames.EmptyWindow;
 import com.nick.wood.swing_gui.view.panels.objects.*;
 import com.nick.wood.swing_gui.view.frames.WindowContainer;
 
 import javax.swing.*;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -21,20 +23,21 @@ public class Main {
 
 	public static void main(String[] args) throws Exception {
 
-		objectMover();
-
 	}
 
-	private static void objectMover() {
+	private static void boxesAndLines() {
 
 		SwingUtilities.invokeLater(() -> {
-
 			try {
 				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 				UIManager.getDefaults().put("SplitPane.border", BorderFactory.createEmptyBorder());
+				System.setProperty("sun.awt.noerasebackground", "true");
 			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
 				e.printStackTrace();
 			}
+
+
+			DragContextWindow dragContextWindow = new DragContextWindow(1000, 1000, new ArrayList<>());
 
 		});
 
@@ -118,9 +121,7 @@ public class Main {
 
 			ButtonPanel buttonPanel2 = new ButtonPanel();
 
-			SideBarWindow sideBarWindow = new SideBarWindow(0.3, guiBuilder.getFieldListPanel(), buttonPanel2,
-					minimiseButton::attachEventListener,
-					buttonPanel2::attachEventListener);
+			SideBarWindow sideBarWindow = new SideBarWindow(0.3, guiBuilder.getFieldListPanel(), buttonPanel2);
 
 			EmptyWindow emptyWindow = new EmptyWindow(1000, 800, guiBuilder.getFieldListPanel());
 			emptyWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -139,7 +140,7 @@ public class Main {
 		ClickableImagePanel buttonPanel1 = new ClickableImagePanel("/icons/icon.png");
 		ButtonPanel buttonPanel2 = new ButtonPanel();
 
-		SideBarWindow sideBarWindow = new SideBarWindow(0.3, buttonPanel1, buttonPanel2, buttonPanel1::attachEventListener, buttonPanel2::attachEventListener);
+		SideBarWindow sideBarWindow = new SideBarWindow(0.3, buttonPanel1, buttonPanel2);
 
 	}
 
