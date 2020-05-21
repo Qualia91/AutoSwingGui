@@ -1,10 +1,8 @@
 package com.nick.wood.swing_gui.listeners;
 
-import com.nick.wood.swing_gui.utils.Line;
-import com.nick.wood.swing_gui.view.frames.DragContextWindow;
+import com.nick.wood.swing_gui.view.panels.objects.DragContextPanel;
 import com.nick.wood.swing_gui.view.panels.objects.DraggableItemPanel;
 
-import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -13,13 +11,13 @@ import java.awt.event.MouseMotionListener;
 public class MouseDragObjectListener implements MouseMotionListener, MouseListener {
 
 	private final DraggableItemPanel jPanel;
-	private final DragContextWindow context;
+	private final DragContextPanel context;
 	private Point mousePressed;
 
 	private boolean resizeModeWidth = false;
 	private boolean resizeModeHeight = false;
 
-	public MouseDragObjectListener(DraggableItemPanel jPanel, DragContextWindow context) {
+	public MouseDragObjectListener(DraggableItemPanel jPanel, DragContextPanel context) {
 		this.jPanel = jPanel;
 		this.context = context;
 	}

@@ -1,21 +1,22 @@
-package com.nick.wood.swing_gui.view.frames;
+package com.nick.wood.swing_gui.view.panels.objects;
 
 import com.nick.wood.swing_gui.listeners.MouseDragObjectListener;
 import com.nick.wood.swing_gui.utils.Line;
-import com.nick.wood.swing_gui.view.panels.objects.ClickableImagePanel;
-import com.nick.wood.swing_gui.view.panels.objects.DraggableItemPanel;
-import com.nick.wood.swing_gui.view.panels.objects.DrawableLayeredPane;
-import com.nick.wood.swing_gui.view.panels.objects.JPanelConnection;
+import com.nick.wood.swing_gui.view.frames.CustomGlassPane;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
-public class DragContextWindow extends JFrame {
+public class DragContextPanel extends JPanel {
 
 	private final ArrayList<DraggableItemPanel> panels;
 	private final DrawableLayeredPane jLayeredPane;
+	private final CustomGlassPane customGlassPane;
 	private DraggableItemPanel lastSelected;
 
 	private Point mousePressed;
@@ -24,45 +25,16 @@ public class DragContextWindow extends JFrame {
 
 	ClickableImagePanel startClickableButton = null;
 
-	public DragContextWindow(int width, int height, ArrayList<DraggableItemPanel> other) {
+	public DragContextPanel() {
+
+		setLayout(new BorderLayout());
 
 		this.jLayeredPane = new DrawableLayeredPane();
-		jLayeredPane.setMinimumSize(new Dimension(width, height));
 
-		add(jLayeredPane);
+		add(jLayeredPane, BorderLayout.CENTER);
 
 		this.panels = new ArrayList<>();
-		CustomGlassPane customGlassPane = new CustomGlassPane(this);
-
-		for (int i = 0; i < 10; i++) {
-			DraggableItemPanel draggableItemPanel = new DraggableItemPanel("" + i);
-			for (ClickableImagePanel eastClickableButton : draggableItemPanel.getEastClickableButtons()) {
-				eastClickableButton.attachEventListener(new MouseAdapter() {
-					@Override
-					public void mouseClicked(MouseEvent e) {
-						if (!drawing) {
-							drawing = true;
-							Point point = SwingUtilities.convertPoint(eastClickableButton.getLabel(), eastClickableButton.getLabel().getX(), eastClickableButton.getLabel().getY(), DragContextWindow.this);
-							customGlassPane.setStartPoint(point);
-							getGlassPane().setVisible(true);
-							startClickableButton = eastClickableButton;
-						}
-					}
-				});
-			}
-			panels.add(draggableItemPanel);
-		}
-
-		int starting = 0;
-
-		for (DraggableItemPanel panel : panels) {
-			panel.setLocation(panel.getX() + starting, panel.getY() + starting);
-			starting += 50;
-			jLayeredPane.add(panel);
-			MouseDragObjectListener mouseDragObjectListener = new MouseDragObjectListener(panel, this);
-			panel.addMouseListener(mouseDragObjectListener);
-			panel.addMouseMotionListener(mouseDragObjectListener);
-		}
+		this.customGlassPane = new CustomGlassPane(this);
 
 		jLayeredPane.addMouseListener(new MouseAdapter() {
 
@@ -100,8 +72,9 @@ public class DragContextWindow extends JFrame {
 
 		addKeyListener(new KeyAdapter() {
 			@Override
-			public void keyTyped(KeyEvent e) {
-				if (e.getKeyCode() == 0) {
+			public void keyPressed(KeyEvent e) {
+				System.out.println(e.getKeyCode());
+				if (e.getKeyCode() == KeyEvent.VK_DELETE) {
 					if (lastSelected != null) {
 						System.out.println(lastSelected);
 						panels.remove(lastSelected);
@@ -128,15 +101,32 @@ public class DragContextWindow extends JFrame {
 			}
 		});
 
-
-		setGlassPane(customGlassPane);
-
-		setVisible(true);
-		super.setSize(width, height);
-		Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-		super.setLocation(dim.width / 2 - this.getSize().width / 2, dim.height / 2 - this.getSize().height / 2);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
+
+	public void addPanel(DraggableItemPanel draggableItemPanel, int xPos, int yPos) {
+		for (ClickableImagePanel eastClickableButton : draggableItemPanel.getEastClickableButtons()) {
+			eastClickableButton.attachEventListener(new MouseAdapter() {
+				@Override
+				public void mouseClicked(MouseEvent e) {
+					if (!drawing) {
+						drawing = true;
+						Point point = SwingUtilities.convertPoint(eastClickableButton.getLabel(), eastClickableButton.getLabel().getX() + eastClickableButton.getLabel().getWidth() / 2, eastClickableButton.getLabel().getY() + eastClickableButton.getLabel().getHeight() / 2, getRootPane());
+						customGlassPane.setStartPoint(point);
+						getRootPane().getGlassPane().setVisible(true);
+						startClickableButton = eastClickableButton;
+					}
+				}
+			});
+		}
+		panels.add(draggableItemPanel);
+
+		draggableItemPanel.setLocation(xPos, yPos);
+		jLayeredPane.add(draggableItemPanel);
+		MouseDragObjectListener mouseDragObjectListener = new MouseDragObjectListener(draggableItemPanel, this);
+		draggableItemPanel.addMouseListener(mouseDragObjectListener);
+		draggableItemPanel.addMouseMotionListener(mouseDragObjectListener);
+	}
+
 
 	public void setLastSelected(DraggableItemPanel lastSelected) {
 		this.lastSelected = lastSelected;
@@ -149,7 +139,7 @@ public class DragContextWindow extends JFrame {
 	public void drawLineComplete(Line line) {
 		this.line = line;
 		this.drawing = false;
-		getGlassPane().setVisible(false);
+		getRootPane().getGlassPane().setVisible(false);
 		// now find if the end position of the line is on a button
 
 		ClickableImagePanel endClickableButton = null;
@@ -157,8 +147,8 @@ public class DragContextWindow extends JFrame {
 		for (DraggableItemPanel panel : panels) {
 			for (ClickableImagePanel westClickableButton : panel.getWestClickableButtons()) {
 				// find position of button
-				Point pt = new Point(westClickableButton.getLabel().getLocation());
-				Point point = SwingUtilities.convertPoint(westClickableButton.getLabel(), pt.x, pt.y, DragContextWindow.this);
+				Point pt = westClickableButton.getLabel().getLocation();
+				Point point = SwingUtilities.convertPoint(westClickableButton.getLabel(), pt.x, pt.y, getRootPane().getGlassPane());
 
 				// find width and height
 				int width = westClickableButton.getLabel().getWidth();
@@ -186,8 +176,7 @@ public class DragContextWindow extends JFrame {
 	 * @param pt
 	 * @param width
 	 * @param height
-	 * @return
-	 * 0 = none match
+	 * @return 0 = none match
 	 * 1 = first match
 	 * 2 = second match
 	 * 3 = both match
@@ -207,5 +196,9 @@ public class DragContextWindow extends JFrame {
 
 	private boolean checkConstraints(int checkVale, double thisVale, int spread) {
 		return (checkVale > thisVale - spread / 2.0) && (checkVale < thisVale + spread / 2.0);
+	}
+
+	public CustomGlassPane getCustomGlassPane() {
+		return customGlassPane;
 	}
 }

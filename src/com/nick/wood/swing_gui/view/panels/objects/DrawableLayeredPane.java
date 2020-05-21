@@ -1,8 +1,5 @@
 package com.nick.wood.swing_gui.view.panels.objects;
 
-import com.nick.wood.swing_gui.utils.Line;
-import com.nick.wood.swing_gui.view.frames.DragContextWindow;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Line2D;

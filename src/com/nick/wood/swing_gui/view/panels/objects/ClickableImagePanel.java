@@ -51,6 +51,39 @@ public class ClickableImagePanel extends JPanel {
 
 	}
 
+	public ClickableImagePanel(ImageIcon imageIcon) {
+
+		setLayout(new GridLayout(1, 1, 10, 10));
+
+		this.imageIcon = imageIcon;
+		this.disabledImageIcon = new ImageIcon(GrayFilter.createDisabledImage(imageIcon.getImage()));
+		this.label = new JLabel(imageIcon);
+		this.label.setDisabledIcon(disabledImageIcon);
+
+		mouseAdapter = new MouseAdapter() {
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				if (isEnabled()) {
+					label.setBorder(hoverOverLineBorder);
+					getRootPane().repaint();
+				}
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				label.setBorder(normalLineBorder);
+				getRootPane().repaint();
+			}
+		};
+
+		label.setBorder(normalLineBorder);
+
+		add(label);
+
+		label.addMouseListener(mouseAdapter);
+
+	}
+
 	@Override
 	public void setEnabled(boolean enabled) {
 		label.setEnabled(enabled);

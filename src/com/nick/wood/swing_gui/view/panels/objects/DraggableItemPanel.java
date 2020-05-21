@@ -12,7 +12,7 @@ public class DraggableItemPanel extends JPanel {
 	private final ArrayList<ClickableImagePanel> westClickableButtons = new ArrayList<>();
 	private final ArrayList<ClickableImagePanel> eastClickableButtons = new ArrayList<>();
 
-	public DraggableItemPanel(String title) {
+	public DraggableItemPanel(String title, int left, int right) {
 
 		setLayout(new BorderLayout());
 
@@ -25,7 +25,7 @@ public class DraggableItemPanel extends JPanel {
 
 		// east buttons
 		ArrayList<JPanel> eastButtons = new ArrayList<>();
-		for (int i = 0; i < 2; i++) {
+		for (int i = 0; i < right; i++) {
 			ClickableImagePanel clickableImagePanel = new ClickableImagePanel("/icons/icon.png");
 			eastClickableButtons.add(clickableImagePanel);
 			eastButtons.add(clickableImagePanel);
@@ -37,7 +37,7 @@ public class DraggableItemPanel extends JPanel {
 
 		// west buttons
 		ArrayList<JPanel> westButtons = new ArrayList<>();
-		for (int i = 0; i < 2; i++) {
+		for (int i = 0; i < left; i++) {
 			ClickableImagePanel clickableImagePanel = new ClickableImagePanel("/icons/icon.png");
 			westClickableButtons.add(clickableImagePanel);
 			westButtons.add(clickableImagePanel);

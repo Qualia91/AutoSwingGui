@@ -5,13 +5,12 @@ import com.nick.wood.swing_gui.class_builder.ConstructorObject;
 import com.nick.wood.swing_gui.class_builder.FieldObject;
 import com.nick.wood.swing_gui.utils.BeanChanger;
 import com.nick.wood.swing_gui.view.GuiBuilder;
-import com.nick.wood.swing_gui.view.frames.DragContextWindow;
 import com.nick.wood.swing_gui.view.frames.EmptyWindow;
 import com.nick.wood.swing_gui.view.panels.objects.*;
 import com.nick.wood.swing_gui.view.frames.WindowContainer;
 
 import javax.swing.*;
-import java.awt.event.KeyEvent;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -22,7 +21,7 @@ import java.util.function.Consumer;
 public class Main {
 
 	public static void main(String[] args) throws Exception {
-
+		boxesAndLines();
 	}
 
 	private static void boxesAndLines() {
@@ -37,7 +36,10 @@ public class Main {
 			}
 
 
-			DragContextWindow dragContextWindow = new DragContextWindow(1000, 1000, new ArrayList<>());
+			DragContextPanel dragContextPanel = new DragContextPanel();
+			EmptyWindow emptyWindow = new EmptyWindow(1000, 1000, dragContextPanel);
+			emptyWindow.setGlassPane(dragContextPanel.getCustomGlassPane());
+			emptyWindow.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
 		});
 

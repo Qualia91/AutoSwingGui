@@ -7,11 +7,9 @@ public class EmptyWindow extends JFrame {
 
 	public EmptyWindow(int width, int height, JPanel parentPanel) {
 
-		setLayout(new GridLayout());
+		setLayout(new BorderLayout());
 
-		setGlassPane(new JPanel());
-
-		add(parentPanel);
+		add(parentPanel, BorderLayout.CENTER);
 		setJMenuBar(createMenuBar());
 
 		setVisible(true);

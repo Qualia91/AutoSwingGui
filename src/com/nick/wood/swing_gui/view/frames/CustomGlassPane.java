@@ -1,18 +1,19 @@
 package com.nick.wood.swing_gui.view.frames;
 
 import com.nick.wood.swing_gui.utils.Line;
+import com.nick.wood.swing_gui.view.panels.objects.DragContextPanel;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
 public class CustomGlassPane extends JComponent {
-	private final DragContextWindow dragContextWindow;
+	private final DragContextPanel dragContextWindow;
 	private Point startPoint;
 	private Point endPoint;
 	private boolean drawing;
 
-	public CustomGlassPane(DragContextWindow dragContextWindow) {
+	public CustomGlassPane(DragContextPanel dragContextWindow) {
 		this.dragContextWindow = dragContextWindow;
 		addMouseListener(new MouseAdapter(){
 			@Override
