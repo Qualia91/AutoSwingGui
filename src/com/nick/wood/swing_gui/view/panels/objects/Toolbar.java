@@ -18,8 +18,7 @@ public class Toolbar extends JPanel {
 
 	}
 
-	public Toolbar(String title) {
+	public Toolbar(String string) {
 		setLayout(new GridLayout(1, 1, 10, 10));
-		add(new JLabel(title));
 	}
 }

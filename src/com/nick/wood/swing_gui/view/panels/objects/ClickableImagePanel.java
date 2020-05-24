@@ -10,8 +10,8 @@ import java.util.EventListener;
 
 public class ClickableImagePanel extends JPanel {
 
-	private final ImageIcon imageIcon;
-	private final ImageIcon disabledImageIcon;
+	private ImageIcon imageIcon;
+	private ImageIcon disabledImageIcon;
 	private JLabel label;
 	LineBorder hoverOverLineBorder = new LineBorder(new Color(0, 0, 0), 1, false);
 	LineBorder normalLineBorder = new LineBorder(new Color(0, 0, 0, 0), 1, false);
@@ -104,5 +104,13 @@ public class ClickableImagePanel extends JPanel {
 
 	public ImageIcon getImageIcon() {
 		return imageIcon;
+	}
+
+	public void setImage(String imageFile) {
+		this.imageIcon = new ImageIcon(this.getClass().getResource(imageFile));
+		this.disabledImageIcon = new ImageIcon(GrayFilter.createDisabledImage(imageIcon.getImage()));
+		this.label.setIcon(imageIcon);
+		this.label.setDisabledIcon(disabledImageIcon);
+		repaint();
 	}
 }
