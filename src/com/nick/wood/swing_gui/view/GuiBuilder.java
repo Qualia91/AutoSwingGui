@@ -7,11 +7,14 @@ import com.nick.wood.swing_gui.view.panels.fields.MapField;
 import com.nick.wood.swing_gui.view.panels.fields.PrimitiveField;
 import com.nick.wood.swing_gui.view.panels.objects.ClickableImagePanel;
 import com.nick.wood.swing_gui.view.panels.objects.FieldListPanel;
+import com.nick.wood.swing_gui.view.panels.objects.MapEntryPanel;
 import com.nick.wood.swing_gui.view.panels.objects.Toolbar;
 
 import javax.swing.*;
+import java.awt.*;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class GuiBuilder {
@@ -39,6 +42,21 @@ public class GuiBuilder {
 			} catch (IllegalAccessException e) {
 				e.printStackTrace();
 			}
+		}
+
+		this.fieldListPanel = new FieldListPanel(jPanels);
+
+	}
+
+	public GuiBuilder(HashMap<?, ?> map, BeanChanger beanChanger) {
+		ArrayList<JPanel> jPanels = new ArrayList<>();
+
+		this.beanChanger = beanChanger;
+
+		for (Map.Entry entry : map.entrySet()) {
+			Object key = entry.getKey();
+			Object value = entry.getValue();
+			jPanels.add(new MapEntryPanel(key.getClass().getSimpleName(), key, value.getClass().getSimpleName(), value, beanChanger, new GridLayout(1, 4, 2, 2)));
 		}
 
 		this.fieldListPanel = new FieldListPanel(jPanels);

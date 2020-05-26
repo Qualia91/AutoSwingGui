@@ -221,7 +221,7 @@ public class MapField extends JPanel {
 
 	private Optional<Object[]> getMapEntrySanitised(Object[] os, HashMap hashMap) {
 
-		MapEntryPanel mapEntryPanel = new MapEntryPanel(mapTypes[0].getTypeName(), os[0], mapTypes[1].getTypeName(), os[1], beanChanger);
+		MapEntryPanel mapEntryPanel = new MapEntryPanel(mapTypes[0].getTypeName(), os[0], mapTypes[1].getTypeName(), os[1], beanChanger, new GridLayout(2, 2, 2, 2));
 
 		int result = JOptionPane.showConfirmDialog(null, mapEntryPanel, "New map entry of type key", JOptionPane.YES_NO_OPTION, JOptionPane.INFORMATION_MESSAGE);
 

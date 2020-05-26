@@ -13,9 +13,10 @@ public class MapEntryPanel extends JPanel {
 	private final JTextField val1TextField;
 	private final JTextField val2TextField;
 
-	public MapEntryPanel(String typeName1, Object val1, String typeName2, Object val2, BeanChanger beanChanger) {
+	public MapEntryPanel(String typeName1, Object val1, String typeName2, Object val2, BeanChanger beanChanger, LayoutManager layoutManager) {
 		JPanel pane = new JPanel();
-		pane.setLayout(new GridLayout(2, 2, 2, 2));
+		pane.setLayout(layoutManager);
+		//pane.setLayout(new GridLayout(2, 2, 2, 2));
 
 		JLabel typeName1Label = new JLabel(typeName1);
 		this.val1TextField = new JTextField(val1.toString());
