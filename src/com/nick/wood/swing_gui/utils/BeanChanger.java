@@ -88,4 +88,11 @@ public class BeanChanger {
 			}
 		}
 	}
+
+	public void reset() {
+		this.isActive = false;
+		this.actionStack.clear();
+		this.redoStack.clear();
+		beanChangerActivateRunnables.forEach(Runnable::run);
+	}
 }
