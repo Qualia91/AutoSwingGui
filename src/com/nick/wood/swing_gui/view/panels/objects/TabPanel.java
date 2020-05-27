@@ -99,7 +99,7 @@ public class TabPanel extends JPanel {
 			super.mouseReleased(e);
 			System.out.println("mouseReleased");
 			if (exited && dragging) {
-				new EmptyWindow(600, 600, new TabPanel(removedTabContent));
+				new EmptyWindow(600, 600, new TabPanel(removedTabContent), new JMenuBar());
 				exited = false;
 			}
 			dragging = false;

@@ -37,7 +37,7 @@ public class Main {
 
 
 			DragContextPanel dragContextPanel = new DragContextPanel();
-			EmptyWindow emptyWindow = new EmptyWindow(1000, 1000, dragContextPanel);
+			EmptyWindow emptyWindow = new EmptyWindow(1000, 1000, dragContextPanel, new JMenuBar());
 			emptyWindow.setGlassPane(dragContextPanel.getCustomGlassPane());
 			emptyWindow.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
@@ -125,7 +125,7 @@ public class Main {
 
 			SideBarWindow sideBarWindow = new SideBarWindow(0.3, guiBuilder.getFieldListPanel(), buttonPanel2);
 
-			EmptyWindow emptyWindow = new EmptyWindow(1000, 800, guiBuilder.getFieldListPanel());
+			EmptyWindow emptyWindow = new EmptyWindow(1000, 800, guiBuilder.getFieldListPanel(), new JMenuBar());
 			emptyWindow.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 
@@ -135,7 +135,7 @@ public class Main {
 	private void tabPanel() {
 		TabPanel tabPanel = new TabPanel();
 
-		EmptyWindow emptyWindow = new EmptyWindow(800, 600, tabPanel);
+		EmptyWindow emptyWindow = new EmptyWindow(800, 600, tabPanel, new JMenuBar());
 	}
 
 	private void sideBar() {

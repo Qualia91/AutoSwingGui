@@ -130,7 +130,7 @@ public class ListField extends JPanel {
 
 							default: {
 								GuiBuilder guiBuilder = new GuiBuilder(jValue.getSelectedValue(), beanChanger, new Toolbar("Edit " + jValue.getSelectedValue().getClass().getTypeName()));
-								EmptyWindow emptyWindow = new EmptyWindow(800, 600, guiBuilder.getFieldListPanel());
+								EmptyWindow emptyWindow = new EmptyWindow(800, 600, guiBuilder.getFieldListPanel(), new JMenuBar());
 								emptyWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 								break;
 							}
