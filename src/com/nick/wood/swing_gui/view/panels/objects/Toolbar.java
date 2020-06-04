@@ -6,13 +6,13 @@ import java.util.ArrayList;
 
 public class Toolbar extends JPanel {
 
-	public Toolbar(ArrayList<ClickableImagePanel> clickableImagePanels) {
+	public Toolbar(ArrayList<JPanel> clickableImagePanels) {
 
 		setLayout(new GridLayout(1, clickableImagePanels.size(), 10, 10));
 
-		for (ClickableImagePanel clickableImagePanel : clickableImagePanels) {
+		for (JPanel jPanel : clickableImagePanels) {
 
-			add(clickableImagePanel);
+			add(jPanel);
 
 		}
 

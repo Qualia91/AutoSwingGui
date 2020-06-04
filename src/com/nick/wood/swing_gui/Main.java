@@ -111,7 +111,7 @@ public class Main {
 
 			ClickableImagePanel minimiseButton = new ClickableImagePanel("/icons/icon.png");
 
-			ArrayList<ClickableImagePanel> clickableImagePanels = new ArrayList<>();
+			ArrayList<JPanel> clickableImagePanels = new ArrayList<>();
 			clickableImagePanels.add(backButton);
 			clickableImagePanels.add(forwardButton);
 			clickableImagePanels.add(minimiseButton);
