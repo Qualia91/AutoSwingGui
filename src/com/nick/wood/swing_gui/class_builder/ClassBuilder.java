@@ -1,6 +1,5 @@
 package com.nick.wood.swing_gui.class_builder;
 
-import javax.naming.spi.ObjectFactoryBuilder;
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
 import java.io.File;
