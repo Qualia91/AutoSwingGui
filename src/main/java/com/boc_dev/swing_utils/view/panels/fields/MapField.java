@@ -28,6 +28,13 @@ public class MapField extends JPanel {
 	private final DefaultListModel<Object> defaultListModel;
 	private Class[] mapTypes = new Class[2];
 
+	// HashSets will use this to build a gui
+	// HasSets are weird in the fact they put the values we are interested in within their keys of a HashMap
+	// Therefore im going to use this to check whether the input is a HashSet. I will do this via checking whether the
+	// key in the map is of type "E" (which is the template name define in the HashSet class.
+	// its volatile as its set in the main thread, and accessed in the swing thread
+	private volatile boolean isSet = false;
+
 	public MapField(Field field, Object model, Map<Object, Object> value, int modifiers, BeanChanger beanChanger) {
 
 		this.beanChanger = beanChanger;
@@ -43,7 +50,16 @@ public class MapField extends JPanel {
 		ParameterizedType pt = (ParameterizedType) field.getGenericType();
 		for (int i = 0; i < 2; i++) {
 			try {
-				mapTypes[i] = Class.forName(pt.getActualTypeArguments()[i].getTypeName(), true, getClass().getClassLoader());
+				// need to check for generic class type and remove it from the name
+				// due to type erasure, it wont be found
+				String typeName = pt.getActualTypeArguments()[i].getTypeName();
+				if (typeName.contains("<")) {
+					typeName = typeName.split("<")[0];
+				} else if (typeName.equals("E")) {
+					typeName = "java.lang.String";
+					isSet = true;
+				}
+				mapTypes[i] = ClassLoader.getSystemClassLoader().loadClass(typeName);
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			}
@@ -133,7 +149,13 @@ public class MapField extends JPanel {
 								break;
 
 							default: {
-								GuiBuilder guiBuilder = new GuiBuilder(selectedValue.getValue(), beanChanger, new Toolbar("Edit " + jValue.getSelectedValue().getClass().getTypeName()));
+								// see comment at top for this weirdness
+								final GuiBuilder guiBuilder;
+								if (isSet) {
+									guiBuilder = new GuiBuilder(selectedValue.getKey(), beanChanger, new Toolbar("Edit " + selectedValue.getKey().getClass().getTypeName()));
+								} else {
+									guiBuilder = new GuiBuilder(selectedValue.getValue(), beanChanger, new Toolbar("Edit " + selectedValue.getValue().getClass().getTypeName()));
+								}
 								EmptyWindow emptyWindow = new EmptyWindow(800, 600, guiBuilder.getFieldListPanel(), new JMenuBar());
 								emptyWindow.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 								break;

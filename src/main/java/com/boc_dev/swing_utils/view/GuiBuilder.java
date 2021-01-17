@@ -1,10 +1,7 @@
 package com.boc_dev.swing_utils.view;
 
 import com.boc_dev.swing_utils.utils.BeanChanger;
-import com.boc_dev.swing_utils.view.panels.fields.BooleanField;
-import com.boc_dev.swing_utils.view.panels.fields.ListField;
-import com.boc_dev.swing_utils.view.panels.fields.MapField;
-import com.boc_dev.swing_utils.view.panels.fields.PrimitiveField;
+import com.boc_dev.swing_utils.view.panels.fields.*;
 import com.boc_dev.swing_utils.view.panels.objects.ClickableImagePanel;
 import com.boc_dev.swing_utils.view.panels.objects.FieldListPanel;
 import com.boc_dev.swing_utils.view.panels.objects.MapEntryPanel;
@@ -16,6 +13,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 public class GuiBuilder {
 
@@ -44,7 +42,7 @@ public class GuiBuilder {
 						jPanels.add(new MapField(declaredField, model, (Map) declaredField.get(model), declaredField.getModifiers(), beanChanger));
 						break;
 					default:
-						jPanels.add(new PrimitiveField(declaredField, model, String.valueOf(declaredField.get(model)), declaredField.getModifiers(), beanChanger, type.toString()));
+						jPanels.add(new PrimitiveField(declaredField, model, declaredField.get(model), declaredField.getModifiers(), beanChanger, type.toString()));
 						break;
 				}
 //				jPanels.add(switch (type.getSimpleName()) {
